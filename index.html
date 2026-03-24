@@ -3108,14 +3108,25 @@ function buildArtCard(dp){
 }
 
 // ── PAYWALL ACTIONS ──
+// Lemon Squeezy 체크아웃 URL (상품 저장 후 LS 대시보드에서 복사)
+const LS_FULL_URL    = 'https://growhaus.lemonsqueezy.com/buy/1440551';
+const LS_SECTION_URL = 'https://growhaus.lemonsqueezy.com/buy/1440557';
+
+function getOrCreateSessionId(){
+  var sid = sessionStorage.getItem('saju_session_id');
+  if(!sid){
+    sid = 'sess_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+    sessionStorage.setItem('saju_session_id', sid);
+  }
+  return sid;
+}
+
 function purchaseFull(){
-  // TODO: Paddle checkout link
-  const toast = document.createElement('div');
-  toast.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#27ae60;color:white;padding:11px 20px;border-radius:8px;font-family:DM Mono,monospace;font-size:.62rem;letter-spacing:.15em;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3)';
-  toast.textContent = '✓ Payment successful — full reading unlocked';
-  document.body.appendChild(toast);
-  doUnlock('paid-full');
-  setTimeout(()=>toast.remove(), 3000);
+  var sid = getOrCreateSessionId();
+  // Lemon Squeezy checkout에 session_id 커스텀 파라미터 추가
+  var url = LS_FULL_URL + '?checkout[custom][session_id]=' + encodeURIComponent(sid);
+  window.open(url, '_blank');
+  startPolling(sid);
 }
 
 function openSectionPicker(){
@@ -3130,15 +3141,14 @@ function openShareFlow(){
 }
 
 function purchaseSection(key){
-  // TODO: Paddle checkout link with section param
+  var sid = getOrCreateSessionId();
+  sessionStorage.setItem('saju_section_key', key);
+  var url = LS_SECTION_URL
+    + '?checkout[custom][session_id]=' + encodeURIComponent(sid)
+    + '&checkout[custom][section]=' + encodeURIComponent(key);
   document.getElementById('sectionPicker').style.display = 'none';
-  unlockSingleSection(key);
-  const names = {love:'Love',career:'Career',health:'Health',luck:'Luck Cycles',year:'This Year'};
-  const toast = document.createElement('div');
-  toast.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#27ae60;color:white;padding:11px 20px;border-radius:8px;font-family:DM Mono,monospace;font-size:.62rem;letter-spacing:.15em;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3)';
-  toast.textContent = '✓ ' + (names[key]||key) + ' section unlocked';
-  document.body.appendChild(toast);
-  setTimeout(()=>toast.remove(), 3000);
+  window.open(url, '_blank');
+  startPolling(sid);
 }
 
 function selectShareSection(key){
@@ -3217,6 +3227,74 @@ function getStoredUnlock(){
     var section = localStorage.getItem('saju_unlock_section');
     return type ? {type:type, section:section} : null;
   }catch(e){ return null; }
+}
+
+// ── 결제 완료 폴링 ──
+// 결제창(새 탭)에서 결제 후 → 웹훅 → Redis 저장
+// 현재 탭에서 3초마다 /api/verify 호출 → 확인되면 자동 언락
+var _pollTimer = null;
+var _pollCount = 0;
+
+function startPolling(sessionId){
+  _pollCount = 0;
+  clearInterval(_pollTimer);
+
+  // 대기 메시지 표시
+  showPayingToast();
+
+  _pollTimer = setInterval(function(){
+    _pollCount++;
+    if(_pollCount > 40){ // 2분 후 포기
+      clearInterval(_pollTimer);
+      hidePayingToast();
+      return;
+    }
+    fetch('/api/verify?session_id=' + encodeURIComponent(sessionId))
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data.paid){
+          clearInterval(_pollTimer);
+          hidePayingToast();
+          onPaymentConfirmed(data.type);
+        }
+      })
+      .catch(function(){});
+  }, 3000); // 3초마다
+}
+
+function onPaymentConfirmed(type){
+  // 토스트
+  var toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#27ae60;color:white;padding:12px 22px;border-radius:8px;font-family:DM Mono,monospace;font-size:.65rem;letter-spacing:.15em;z-index:9999;white-space:nowrap;box-shadow:0 4px 24px rgba(0,0,0,.4)';
+  toast.textContent = type === 'full' ? '✓ Full reading unlocked!' : '✓ Section unlocked!';
+  document.body.appendChild(toast);
+  setTimeout(function(){toast.remove();}, 4000);
+
+  // 언락 처리
+  if(type === 'full'){
+    doUnlock('paid-full');
+  } else {
+    var key = sessionStorage.getItem('saju_section_key') || 'love';
+    unlockSingleSection(key);
+  }
+
+  // localStorage에 저장 (재방문 대비)
+  try{
+    localStorage.setItem('saju_paid_type', type);
+    localStorage.setItem('saju_paid_ts', Date.now().toString());
+  }catch(e){}
+}
+
+var _payingToast = null;
+function showPayingToast(){
+  _payingToast = document.createElement('div');
+  _payingToast.id = 'paying-toast';
+  _payingToast.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(28,27,38,.97);border:1px solid rgba(200,169,106,.3);color:rgba(240,235,224,.7);padding:12px 20px;border-radius:10px;font-family:DM Mono,monospace;font-size:.6rem;letter-spacing:.12em;z-index:9999;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.5)';
+  _payingToast.textContent = 'Waiting for payment confirmation…';
+  document.body.appendChild(_payingToast);
+}
+function hidePayingToast(){
+  if(_payingToast){ _payingToast.remove(); _payingToast = null; }
 }
 
 </script>

@@ -1,75 +1,53 @@
 import crypto from 'crypto';
 
-// Upstash Redis REST API 헬퍼
 async function redisSet(key, value, exSeconds) {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
-  const body = exSeconds
-    ? ['SET', key, value, 'EX', exSeconds]
-    : ['SET', key, value];
-  const res = await fetch(`${url}/pipeline`, {
+  await fetch(`${url}/pipeline`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify([body]),
+    body: JSON.stringify([['SET', key, value, 'EX', exSeconds]]),
   });
-  return res.ok;
 }
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method !== 'POST') return res.status(405).end();
 
-  // ── 서명 검증 ──
   const secret = process.env.LEMON_WEBHOOK_SECRET;
-  const signature = req.headers['x-signature'];
-  const rawBody = JSON.stringify(req.body);
-  const hmac = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
-
-  if (hmac !== signature) {
-    console.error('Invalid webhook signature');
-    return res.status(401).json({ error: 'Invalid signature' });
-  }
+  const sig = req.headers['x-signature'];
+  const hmac = crypto.createHmac('sha256', secret)
+    .update(JSON.stringify(req.body)).digest('hex');
+  if (hmac !== sig) return res.status(401).json({ error: 'Invalid signature' });
 
   const event = req.headers['x-event-name'];
   const data = req.body.data;
 
-  // ── 결제 완료 ──
-  if (event === 'order_created') {
+  if (event === 'order_created' && data.attributes.status === 'paid') {
     const orderId   = String(data.id);
-    const email     = data.attributes.user_email;
+    const email     = data.attributes.user_email.toLowerCase().trim();
     const productId = String(data.attributes.first_order_item?.product_id);
-    const status    = data.attributes.status;
+    const type      = productId === String(process.env.LS_FULL_PRODUCT_ID) ? 'full' : 'section';
 
-    if (status !== 'paid') {
-      return res.status(200).json({ received: true });
+    // custom session_id (결제 전 프론트에서 생성해서 넘긴 값)
+    const sessionId = data.attributes.first_order_item?.custom_data?.session_id;
+
+    // 세션 ID 기반으로 저장 — 프론트에서 폴링으로 확인
+    if (sessionId) {
+      await redisSet(
+        `session:${sessionId}`,
+        JSON.stringify({ type, orderId, email, paid: true }),
+        3600 // 1시간
+      );
     }
 
-    const isFullProduct = productId === String(process.env.LS_FULL_PRODUCT_ID);
-    const unlockType = isFullProduct ? 'full' : 'section';
-
-    // 언락 토큰 생성 (orderId 기반 SHA256)
-    const token = crypto
-      .createHash('sha256')
-      .update(`${orderId}:${secret}`)
-      .digest('hex')
-      .slice(0, 32);
-
-    // Redis에 저장 — 24시간 TTL
-    // key: token → value: JSON(unlockType, orderId, email)
+    // 이메일 기반도 함께 저장 (백업)
     await redisSet(
-      `unlock:${token}`,
-      JSON.stringify({ type: unlockType, orderId, email }),
-      86400 // 24시간
+      `email:${email}`,
+      JSON.stringify({ type, orderId, paid: true }),
+      604800 // 7일
     );
 
-    console.log(`✓ Stored unlock token for order ${orderId} | type: ${unlockType}`);
-  }
-
-  // ── 환불 ──
-  if (event === 'order_refunded') {
-    console.log(`Refund: order ${data.id}`);
-    // 토큰 무효화는 TTL 만료로 자동 처리
+    console.log(`✓ Order ${orderId} | ${email} | ${type} | session: ${sessionId}`);
   }
 
   return res.status(200).json({ received: true });

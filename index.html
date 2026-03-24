@@ -1606,6 +1606,7 @@ select option{background:#1c1b26;color:var(--paper)}
     </div>
 
     <div class="pw-note">No subscription · One-time only</div>
+    <div id="unlockBar" style="display:none;align-items:center;gap:8px;padding:10px 14px;font-family:DM Mono,monospace;font-size:.6rem;letter-spacing:.15em;color:#27ae60;text-transform:uppercase"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Reading unlocked</div>
   </div><!-- /paywall-bar -->
 
 </div><!-- /page-result -->
@@ -1892,10 +1893,6 @@ function initResult(){
   // paywallBar는 스크롤 트리거로 표시
   document.getElementById('lockedContent').style.display='none';
   document.getElementById('fadeZone').classList.remove('unlocked');
-  document.getElementById('unlockBar').classList.remove('show');
-  ['conf-insta','conf-x','conf-threads'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.classList.remove('show');
-  });
   resetSkeleton();
 
   const {year,month,day,hour,min,name,gender,city} = userData;
@@ -2768,9 +2765,6 @@ function shareText(){
 function shareX(){ openShareCard(); }
 function shareThreads(){ openShareCard(); }
 function confirmShare(p){
-  ['conf-insta','conf-x','conf-threads'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.classList.remove('show');
-  });
   // 전체 언락 아님 — 섹션 선택
   openSectionPicker();
 }
@@ -3153,6 +3147,21 @@ function selectShareSection(key){
   document.getElementById('shareFlowStep1').style.display = 'none';
   document.getElementById('shareFlowStep2').style.display = '';
   document.getElementById('shareConfirmRow').style.display = 'none';
+}
+
+function doUnlock(via){
+  // paywallBar 숨기기
+  var pb = document.getElementById('paywallBar');
+  if(pb) pb.style.display = 'none';
+  // 언락바 표시
+  var ub = document.getElementById('unlockBar');
+  if(ub){ ub.style.display = 'flex'; }
+  // fadeZone 언락
+  document.getElementById('fadeZone').classList.add('unlocked');
+  // lockedContent 표시
+  document.getElementById('lockedContent').style.display = 'block';
+  // 유료 파트 API 호출
+  startPaidReading();
 }
 
 </script>

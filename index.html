@@ -3165,39 +3165,50 @@ function doUnlock(via){
 }
 
 // ── PAYMENT RETURN HANDLER ──
-// Lemon Squeezy 결제 완료 후 ?token=xxx&type=full 로 리다이렉트됨
+// Lemon Squeezy 결제 완료 후 ?token=xxx 로 리다이렉트됨
 (function(){
   var params = new URLSearchParams(window.location.search);
   var token  = params.get('token');
-  var type   = params.get('type'); // 'full' or 'section'
-  var section= params.get('section'); // section key if type=section
+  if(!token) return;
 
-  if(token){
-    // 토큰 localStorage에 저장 (재방문 시에도 언락 유지)
-    try{
-      var purchases = JSON.parse(localStorage.getItem('saju_purchases')||'[]');
-      if(!purchases.includes(token)){
-        purchases.push(token);
-        localStorage.setItem('saju_purchases', JSON.stringify(purchases));
-        localStorage.setItem('saju_unlock_type', type||'full');
-        if(section) localStorage.setItem('saju_unlock_section', section);
-      }
-    }catch(e){}
+  // URL 파라미터 즉시 제거
+  window.history.replaceState({}, '', window.location.pathname);
 
-    // URL 파라미터 제거 (깔끔하게)
-    var cleanUrl = window.location.pathname;
-    window.history.replaceState({}, '', cleanUrl);
+  // verify API 호출
+  fetch('/api/verify?token=' + encodeURIComponent(token))
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(!data.valid) return;
 
-    // 결제 완료 토스트
-    document.addEventListener('DOMContentLoaded', function(){
-      var toast = document.createElement('div');
-      toast.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#27ae60;color:white;padding:12px 20px;border-radius:8px;font-family:DM Mono,monospace;font-size:.62rem;letter-spacing:.15em;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4)';
-      toast.textContent = type==='section' ? '✓ Section unlocked' : '✓ Full reading unlocked';
-      document.body.appendChild(toast);
-      setTimeout(function(){toast.remove();}, 3500);
-    });
-  }
+      // localStorage에 언락 상태 저장
+      try{
+        localStorage.setItem('saju_unlock_token', token);
+        localStorage.setItem('saju_unlock_type', data.type);
+      }catch(e){}
+
+      // 결제 완료 토스트
+      document.addEventListener('DOMContentLoaded', function(){
+        var msg = data.type === 'full'
+          ? '✓ Full reading unlocked'
+          : '✓ Section unlocked';
+        var toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#27ae60;color:white;padding:12px 20px;border-radius:8px;font-family:DM Mono,monospace;font-size:.62rem;letter-spacing:.15em;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4)';
+        toast.textContent = msg;
+        document.body.appendChild(toast);
+        setTimeout(function(){toast.remove();}, 3500);
+      });
+    })
+    .catch(function(err){ console.error('Verify failed:', err); });
 })();
+
+// 저장된 언락 상태 확인
+function getStoredUnlock(){
+  try{
+    var type = localStorage.getItem('saju_unlock_type');
+    var token = localStorage.getItem('saju_unlock_token');
+    return (type && token) ? {type:type, token:token} : null;
+  }catch(e){ return null; }
+}
 
 // 저장된 언락 상태 확인 함수
 function getStoredUnlock(){

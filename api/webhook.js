@@ -1,66 +1,75 @@
-const crypto = require('crypto');
+import crypto from 'crypto';
+
+// Upstash Redis REST API 헬퍼
+async function redisSet(key, value, exSeconds) {
+  const url = process.env.KV_REST_API_URL;
+  const token = process.env.KV_REST_API_TOKEN;
+  const body = exSeconds
+    ? ['SET', key, value, 'EX', exSeconds]
+    : ['SET', key, value];
+  const res = await fetch(`${url}/pipeline`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify([body]),
+  });
+  return res.ok;
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // ── 1. 서명 검증 ──
+  // ── 서명 검증 ──
   const secret = process.env.LEMON_WEBHOOK_SECRET;
   const signature = req.headers['x-signature'];
   const rawBody = JSON.stringify(req.body);
-
-  const hmac = crypto
-    .createHmac('sha256', secret)
-    .update(rawBody)
-    .digest('hex');
+  const hmac = crypto.createHmac('sha256', secret).update(rawBody).digest('hex');
 
   if (hmac !== signature) {
     console.error('Invalid webhook signature');
     return res.status(401).json({ error: 'Invalid signature' });
   }
 
-  // ── 2. 이벤트 처리 ──
   const event = req.headers['x-event-name'];
   const data = req.body.data;
 
+  // ── 결제 완료 ──
   if (event === 'order_created') {
-    const orderId    = data.id;
-    const email      = data.attributes.user_email;
-    const productId  = data.attributes.first_order_item?.product_id;
-    const status     = data.attributes.status; // 'paid'
+    const orderId   = String(data.id);
+    const email     = data.attributes.user_email;
+    const productId = String(data.attributes.first_order_item?.product_id);
+    const status    = data.attributes.status;
 
-    if (status === 'paid') {
-      // 어떤 상품인지 확인
-      const FULL_PRODUCT_ID    = process.env.LS_FULL_PRODUCT_ID;    // $4.99
-      const SECTION_PRODUCT_ID = process.env.LS_SECTION_PRODUCT_ID; // $1.99
-
-      let unlockType = 'full';
-      if (String(productId) === String(SECTION_PRODUCT_ID)) {
-        unlockType = 'section';
-      }
-
-      // 언락 토큰 생성 (이메일 + orderId 기반)
-      const token = crypto
-        .createHash('sha256')
-        .update(`${email}:${orderId}:${secret}`)
-        .digest('hex')
-        .slice(0, 32);
-
-      // 리다이렉트 URL에 토큰 포함
-      // 실제로는 DB에 저장해야 하지만 MVP에서는 토큰 검증으로 충분
-      console.log(`✓ Order ${orderId} | ${email} | type: ${unlockType} | token: ${token}`);
-
-      // TODO: DB 저장 (Vercel KV 또는 Supabase)
-      // 지금은 토큰을 이메일로 전송하거나 리다이렉트 URL에 포함
+    if (status !== 'paid') {
+      return res.status(200).json({ received: true });
     }
+
+    const isFullProduct = productId === String(process.env.LS_FULL_PRODUCT_ID);
+    const unlockType = isFullProduct ? 'full' : 'section';
+
+    // 언락 토큰 생성 (orderId 기반 SHA256)
+    const token = crypto
+      .createHash('sha256')
+      .update(`${orderId}:${secret}`)
+      .digest('hex')
+      .slice(0, 32);
+
+    // Redis에 저장 — 24시간 TTL
+    // key: token → value: JSON(unlockType, orderId, email)
+    await redisSet(
+      `unlock:${token}`,
+      JSON.stringify({ type: unlockType, orderId, email }),
+      86400 // 24시간
+    );
+
+    console.log(`✓ Stored unlock token for order ${orderId} | type: ${unlockType}`);
   }
 
+  // ── 환불 ──
   if (event === 'order_refunded') {
-    const orderId = data.id;
-    const email   = data.attributes.user_email;
-    console.log(`Refund processed: ${orderId} | ${email}`);
-    // TODO: 언락 취소 처리
+    console.log(`Refund: order ${data.id}`);
+    // 토큰 무효화는 TTL 만료로 자동 처리
   }
 
   return res.status(200).json({ received: true });

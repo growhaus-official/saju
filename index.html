@@ -877,6 +877,39 @@ select option{background:#1c1b26;color:var(--paper)}
 .section-choice input[type=radio]{accent-color:var(--gold);width:14px;height:14px;flex-shrink:0;cursor:pointer;}
 .share-next-btn{width:100%;margin-top:10px;padding:12px;background:var(--surface);border:1px solid rgba(200,169,106,.25);border-radius:var(--radius-sm);font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.15em;color:var(--gold);text-transform:uppercase;cursor:pointer;transition:all .2s;}
 .share-next-btn:hover{background:rgba(200,169,106,.08);border-color:rgba(200,169,106,.4);}
+
+/* ── PAYWALL BAR REDESIGN ── */
+.pw-locked-chips{display:flex;gap:5px;padding:10px 14px 0;overflow-x:auto;scrollbar-width:none}
+.pw-locked-chips::-webkit-scrollbar{display:none}
+.pw-chip{display:flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);padding:4px 10px;border-radius:100px;white-space:nowrap;font-size:.63rem;color:var(--muted);flex-shrink:0}
+.pw-lock{font-size:.6rem;opacity:.4}
+.pw-options{padding:10px 14px 0;display:flex;flex-direction:column;gap:7px}
+.pw-opt-row{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.pw-opt{border:none;cursor:pointer;border-radius:var(--radius-sm);padding:12px 14px;transition:all .18s;text-align:left;display:flex;align-items:center;justify-content:space-between}
+.pw-opt:active{transform:scale(.97)}
+.pw-opt-primary{background:var(--gold);color:#0a0a0f;box-shadow:0 4px 20px rgba(200,169,106,.25)}
+.pw-opt-primary .pw-opt-title{font-weight:700;font-size:.88rem;margin-bottom:2px}
+.pw-opt-primary .pw-opt-desc{font-size:.72rem;opacity:.65}
+.pw-opt-price{text-align:right;flex-shrink:0;margin-left:12px}
+.pw-orig{font-size:.68rem;text-decoration:line-through;opacity:.5;display:block}
+.pw-amount{font-size:1.1rem;font-weight:800;display:block}
+.pw-opt-secondary,.pw-opt-share{background:var(--surface);border:1px solid var(--border);flex-direction:column;align-items:flex-start}
+.pw-opt-secondary:hover,.pw-opt-share:hover{border-color:rgba(200,169,106,.3)}
+.pw-opt-title{font-size:.82rem;font-weight:600;color:var(--paper);margin-bottom:2px}
+.pw-opt-desc{font-size:.68rem;color:var(--muted)}
+.pw-opt-price2{font-size:.92rem;font-weight:700;color:var(--gold);margin-top:6px}
+.pw-opt-share .pw-opt-price2{color:var(--jade)}
+.pw-section-picker,.pw-share-flow{padding:0 14px 2px}
+.pw-picker-title{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:6px 0 8px}
+.pw-picker-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pw-pick-btn{background:var(--surface2);border:1px solid var(--border);color:rgba(240,235,224,.75);padding:9px 10px;border-radius:var(--radius-sm);font-size:.78rem;cursor:pointer;text-align:left;transition:all .18s}
+.pw-pick-btn:hover{border-color:rgba(200,169,106,.35);color:var(--gold)}
+.pw-pick-btn:active{transform:scale(.97)}
+.pw-back-btn{background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;padding:6px 0;margin-top:4px}
+.pw-share-platform{display:flex;align-items:center;gap:9px;padding:11px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;color:rgba(240,235,224,.8);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;width:100%;transition:all .18s}
+.pw-share-platform:hover{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.05)}
+.pw-note{text-align:center;font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.15em;color:rgba(240,235,224,.18);text-transform:uppercase;padding:8px 14px 12px}
+
 </style>
 </head>
 <body>
@@ -1474,82 +1507,105 @@ select option{background:#1c1b26;color:var(--paper)}
   </div><!-- /lockedContent -->
 
   <!-- ── PAYWALL BAR (sticky bottom) ── -->
-  <div class="paywall-bar" id="paywallBar" style="display:none;transform:translateY(100%);transition:transform .4s ease, opacity .4s ease;opacity:0;">
+  <!-- PAYWALL BAR -->
+  <div class="paywall-bar" id="paywallBar" style="display:none;transform:translateY(100%);transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .4s ease;opacity:0;">
 
-    <div class="paywall-teaser">
-      <span class="teaser-chip"><span class="lock">🔒</span> How you love</span>
-      <span class="teaser-chip"><span class="lock">🔒</span> Work &amp; money</span>
-      <span class="teaser-chip"><span class="lock">🔒</span> Health patterns</span>
-      <span class="teaser-chip"><span class="lock">🔒</span> Luck cycles</span>
-      <span class="teaser-chip"><span class="lock">🔒</span> This year</span>
+    <!-- 잠긴 항목 미리보기 -->
+    <div class="pw-locked-chips">
+      <span class="pw-chip"><span class="pw-lock">🔒</span>How you love</span>
+      <span class="pw-chip"><span class="pw-lock">🔒</span>Work &amp; money</span>
+      <span class="pw-chip"><span class="pw-lock">🔒</span>Health</span>
+      <span class="pw-chip"><span class="pw-lock">🔒</span>Luck cycles</span>
+      <span class="pw-chip"><span class="pw-lock">🔒</span>This year</span>
     </div>
 
-    <div class="paywall-actions">
+    <!-- 결제 옵션 3가지 -->
+    <div class="pw-options">
 
-      <!-- METHOD 2: Share — 1회 1섹션만 -->
-      <div class="pw-method" id="shareMethod">
-        <div class="pw-method-header">
-          <div>
-            <div class="pw-method-title">Share to unlock one section</div>
-            <div class="pw-method-label">One section · one time · no login</div>
-          </div>
-          <span class="pw-badge viral">1 section</span>
+      <!-- OPTION 1: 전체 언락 $4.99 (강조) -->
+      <button class="pw-opt pw-opt-primary" onclick="purchaseFull()">
+        <div class="pw-opt-left">
+          <div class="pw-opt-title">Unlock everything</div>
+          <div class="pw-opt-desc">All 5 sections · saved permanently</div>
         </div>
+        <div class="pw-opt-price">
+          <span class="pw-orig">$9.99</span>
+          <span class="pw-amount">$4.99</span>
+        </div>
+      </button>
 
-        <!-- STEP 1: 섹션 선택 -->
-        <div id="shareStep1" style="padding:0 14px 12px">
-          <div style="font-family:'DM Mono',monospace;font-size:.54rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:9px">1. Choose a section to unlock</div>
-          <div style="display:flex;flex-direction:column;gap:5px" id="sectionChoices">
-            <label class="section-choice"><input type="radio" name="shareSection" value="love"> <span>♡ Love &amp; Relationships</span></label>
-            <label class="section-choice"><input type="radio" name="shareSection" value="career"> <span>◈ Career &amp; Wealth</span></label>
-            <label class="section-choice"><input type="radio" name="shareSection" value="health"> <span>⬡ Health &amp; Vitality</span></label>
-            <label class="section-choice"><input type="radio" name="shareSection" value="luck"> <span>⟳ Luck Cycles</span></label>
-            <label class="section-choice"><input type="radio" name="shareSection" value="year"> <span>★ This Year</span></label>
-          </div>
-          <button class="share-next-btn" onclick="goToShareStep2()">
-            Next — choose platform →
+      <!-- OPTION 2 + 3: 나란히 -->
+      <div class="pw-opt-row">
+        <!-- OPTION 2: 단일 섹션 $1.99 -->
+        <button class="pw-opt pw-opt-secondary" onclick="openSectionPicker()">
+          <div class="pw-opt-title">One section</div>
+          <div class="pw-opt-desc">Pick any one</div>
+          <div class="pw-opt-price2">$1.99</div>
+        </button>
+
+        <!-- OPTION 3: 공유 무료 -->
+        <button class="pw-opt pw-opt-share" onclick="openShareFlow()">
+          <div class="pw-opt-title">Share free</div>
+          <div class="pw-opt-desc">Post on X or Threads</div>
+          <div class="pw-opt-price2" style="color:var(--jade)">$0</div>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- 섹션 피커 (처음엔 숨김) -->
+    <div class="pw-section-picker" id="sectionPicker" style="display:none">
+      <div class="pw-picker-title">Which section?</div>
+      <div class="pw-picker-grid">
+        <button class="pw-pick-btn" onclick="purchaseSection('love')">♡ Love</button>
+        <button class="pw-pick-btn" onclick="purchaseSection('career')">◈ Career</button>
+        <button class="pw-pick-btn" onclick="purchaseSection('health')">⬡ Health</button>
+        <button class="pw-pick-btn" onclick="purchaseSection('luck')">⟳ Luck</button>
+        <button class="pw-pick-btn" onclick="purchaseSection('year')">★ This Year</button>
+      </div>
+      <button class="pw-back-btn" onclick="document.getElementById('sectionPicker').style.display='none'">← Back</button>
+    </div>
+
+    <!-- 공유 플로우 (처음엔 숨김) -->
+    <div class="pw-share-flow" id="shareFlow" style="display:none">
+      <div class="pw-picker-title">Share to unlock one section free</div>
+      <!-- 섹션 선택 -->
+      <div id="shareFlowStep1">
+        <div class="pw-picker-grid" style="margin-bottom:10px">
+          <button class="pw-pick-btn" onclick="selectShareSection('love')">♡ Love</button>
+          <button class="pw-pick-btn" onclick="selectShareSection('career')">◈ Career</button>
+          <button class="pw-pick-btn" onclick="selectShareSection('health')">⬡ Health</button>
+          <button class="pw-pick-btn" onclick="selectShareSection('luck')">⟳ Luck</button>
+          <button class="pw-pick-btn" onclick="selectShareSection('year')">★ This Year</button>
+        </div>
+        <button class="pw-back-btn" onclick="document.getElementById('shareFlow').style.display='none'">← Back</button>
+      </div>
+      <!-- 플랫폼 선택 -->
+      <div id="shareFlowStep2" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:10px">
+          <button class="pw-share-platform" onclick="doShareOnce('x')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Post on X
+          </button>
+          <button class="pw-share-platform" onclick="doShareOnce('threads')">
+            <svg width="16" height="16" viewBox="0 0 192 192" fill="currentColor"><path d="M141.537 88.988a66.667 66.667 0 0 0-2.518-1.143c-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.396-35.12 18.036l13.779 9.452c5.73-8.695 14.724-10.548 21.348-10.548h.229c8.249.053 14.474 2.452 18.503 7.129 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.68-1.14-23.82 1.371-39.134 15.264-38.105 34.568.522 9.792 5.4 18.216 13.735 23.719 7.047 4.652 16.124 6.927 25.557 6.412 12.458-.683 22.231-5.436 29.049-14.127 5.178-6.6 8.453-15.153 9.899-25.93 5.937 3.583 10.337 8.298 12.767 13.966 4.132 9.635 4.373 25.468-8.546 38.376-11.319 11.308-24.925 16.2-45.488 16.351-22.809-.169-40.06-7.484-51.275-21.742C35.236 139.966 29.808 120.682 29.605 96c.203-24.682 5.63-43.966 16.133-57.317C56.954 24.425 74.206 17.11 97.015 16.94c22.975.17 40.526 7.52 52.171 21.847 5.71 7.026 10.015 15.86 12.853 26.162l16.147-4.308c-3.44-12.68-8.853-23.606-16.219-32.668C147.036 9.607 125.202.195 97.144 0h-.29C68.988.195 47.396 9.642 32.777 28.08 19.873 44.485 13.224 67.315 13.001 96c.223 28.685 6.872 51.515 19.776 67.92 14.619 18.438 36.211 27.885 64.267 28.08h.29c24.971-.174 42.8-6.713 57.389-21.286 19.083-19.063 18.456-42.977 12.187-57.637-4.461-10.39-13.033-18.755-25.373-24.089Zm-44.206 41.59c-10.437.572-21.286-4.1-21.82-14.139-.397-7.442 5.296-15.746 22.461-16.735 1.966-.113 3.895-.169 5.79-.169 6.235 0 12.068.606 17.371 1.765-1.978 24.702-13.58 28.713-23.802 29.278Z"/></svg>
+            Share on Threads
           </button>
         </div>
-
-        <!-- STEP 2: 플랫폼 선택 (처음엔 숨김) -->
-        <div id="shareStep2" style="display:none;padding:0 14px 12px">
-          <div style="font-family:'DM Mono',monospace;font-size:.54rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:9px">2. Share on any platform</div>
-          <div style="display:flex;flex-direction:column;gap:6px">
-                        <button class="share-row-btn" onclick="doShareOnce('x')">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              <span class="share-row-title" style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--paper)">Post on X</span>
-            </button>
-            <button class="share-row-btn" onclick="doShareOnce('threads')">
-              <svg width="18" height="18" viewBox="0 0 192 192" fill="currentColor"><path d="M141.537 88.988a66.667 66.667 0 0 0-2.518-1.143c-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.396-35.12 18.036l13.779 9.452c5.73-8.695 14.724-10.548 21.348-10.548h.229c8.249.053 14.474 2.452 18.503 7.129 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.68-1.14-23.82 1.371-39.134 15.264-38.105 34.568.522 9.792 5.4 18.216 13.735 23.719 7.047 4.652 16.124 6.927 25.557 6.412 12.458-.683 22.231-5.436 29.049-14.127 5.178-6.6 8.453-15.153 9.899-25.93 5.937 3.583 10.337 8.298 12.767 13.966 4.132 9.635 4.373 25.468-8.546 38.376-11.319 11.308-24.925 16.2-45.488 16.351-22.809-.169-40.06-7.484-51.275-21.742C35.236 139.966 29.808 120.682 29.605 96c.203-24.682 5.63-43.966 16.133-57.317C56.954 24.425 74.206 17.11 97.015 16.94c22.975.17 40.526 7.52 52.171 21.847 5.71 7.026 10.015 15.86 12.853 26.162l16.147-4.308c-3.44-12.68-8.853-23.606-16.219-32.668C147.036 9.607 125.202.195 97.144 0h-.29C68.988.195 47.396 9.642 32.777 28.08 19.873 44.485 13.224 67.315 13.001 96c.223 28.685 6.872 51.515 19.776 67.92 14.619 18.438 36.211 27.885 64.267 28.08h.29c24.971-.174 42.8-6.713 57.389-21.286 19.083-19.063 18.456-42.977 12.187-57.637-4.461-10.39-13.033-18.755-25.373-24.089Zm-44.206 41.59c-10.437.572-21.286-4.1-21.82-14.139-.397-7.442 5.296-15.746 22.461-16.735 1.966-.113 3.895-.169 5.79-.169 6.235 0 12.068.606 17.371 1.765-1.978 24.702-13.58 28.713-23.802 29.278Z"/></svg>
-              <span class="share-row-title" style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--paper)">Threads</span>
-            </button>
-          </div>
-
-          <!-- 공유 후 확인 -->
-          <div id="shareConfirmRow" style="display:none;margin-top:10px;padding:10px 0;border-top:1px solid var(--border)">
-            <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px;font-style:italic">Posted it? Tap below to unlock.</div>
-            <button class="confirm-yes" style="width:100%;padding:12px;" onclick="confirmShareOnce()">
-              Done — Unlock this section ✓
-            </button>
-          </div>
-
-          <button onclick="document.getElementById('shareStep1').style.display='';document.getElementById('shareStep2').style.display='none'" style="background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:.54rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;margin-top:8px;padding:4px 0">← Back</button>
+        <div id="shareConfirmRow" style="display:none;padding:10px;background:rgba(39,174,96,.08);border:1px solid rgba(39,174,96,.2);border-radius:8px;margin-bottom:8px">
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:8px">All posted?</div>
+          <button class="confirm-yes" style="width:100%;padding:11px" onclick="confirmShareOnce()">Done — Unlock ✓</button>
         </div>
-
-        <!-- 공유 언락 완료 후 표시 -->
-        <div id="shareUsedNotice" style="display:none;padding:12px 14px;background:rgba(39,174,96,.07);border-top:1px solid rgba(39,174,96,.15)">
-          <div style="font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.15em;color:#27ae60;text-transform:uppercase;margin-bottom:3px">✓ Share unlock used</div>
-          <div style="font-size:.74rem;color:var(--muted)">One section unlocked via share. Unlock more sections for $1.99 each.</div>
-        </div>
+        <button class="pw-back-btn" onclick="document.getElementById('shareFlowStep2').style.display='none';document.getElementById('shareFlowStep1').style.display=''">← Back</button>
       </div>
-
-      <!-- Unlock success -->
-      <div class="unlock-bar" id="unlockBar">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-        Reading unlocked
+      <!-- 공유 사용 완료 -->
+      <div id="shareUsedNotice" style="display:none;padding:12px;text-align:center">
+        <div style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--jade);text-transform:uppercase;margin-bottom:3px">✓ Share unlock used</div>
+        <div style="font-size:.75rem;color:var(--muted)">Unlock more for $1.99 each</div>
       </div>
-
     </div>
+
+    <div class="pw-note">No subscription · One-time only</div>
   </div><!-- /paywall-bar -->
 
 </div><!-- /page-result -->
@@ -2297,139 +2353,308 @@ function showShareUsedNotice(){
 
 // 오행별 배경 SVG (수묵화 스타일)
 const SHARE_ART = {
+
   'Wood': `<svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
-    <rect width="360" height="360" fill="#070d0a"/>
-    <!-- 달 -->
-    <circle cx="180" cy="90" r="48" fill="none" stroke="rgba(200,230,200,.12)" stroke-width="1"/>
-    <circle cx="180" cy="90" r="36" fill="rgba(180,220,180,.07)"/>
-    <!-- 대나무 줄기 -->
-    <line x1="130" y1="360" x2="130" y2="80" stroke="rgba(100,180,100,.18)" stroke-width="3" stroke-linecap="round"/>
-    <line x1="180" y1="360" x2="175" y2="60" stroke="rgba(100,180,100,.22)" stroke-width="4" stroke-linecap="round"/>
-    <line x1="230" y1="360" x2="235" y2="100" stroke="rgba(100,180,100,.15)" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- 마디 -->
-    <line x1="125" y1="240" x2="135" y2="240" stroke="rgba(100,180,100,.3)" stroke-width="2"/>
-    <line x1="170" y1="200" x2="184" y2="200" stroke="rgba(100,180,100,.3)" stroke-width="2.5"/>
-    <line x1="228" y1="260" x2="242" y2="260" stroke="rgba(100,180,100,.25)" stroke-width="2"/>
-    <line x1="125" y1="160" x2="135" y2="160" stroke="rgba(100,180,100,.28)" stroke-width="2"/>
-    <line x1="170" y1="130" x2="184" y2="128" stroke="rgba(100,180,100,.28)" stroke-width="2.5"/>
-    <!-- 잎 -->
-    <ellipse cx="110" cy="210" rx="28" ry="8" fill="rgba(80,160,80,.2)" transform="rotate(-35,110,210)"/>
-    <ellipse cx="155" cy="175" rx="32" ry="9" fill="rgba(80,160,80,.22)" transform="rotate(20,155,175)"/>
-    <ellipse cx="248" cy="230" rx="26" ry="7" fill="rgba(80,160,80,.18)" transform="rotate(-20,248,230)"/>
-    <ellipse cx="148" cy="110" rx="30" ry="8" fill="rgba(80,160,80,.2)" transform="rotate(-40,148,110)"/>
-    <ellipse cx="210" cy="140" rx="24" ry="7" fill="rgba(80,160,80,.18)" transform="rotate(30,210,140)"/>
-    <!-- 안개 -->
-    <ellipse cx="180" cy="340" rx="160" ry="30" fill="rgba(100,180,100,.04)"/>
-    <!-- 천간 문자 -->
-    <text x="180" y="310" text-anchor="middle" font-family="serif" font-size="48" fill="rgba(100,200,100,.08)" font-weight="200">木</text>
+    <defs>
+      <radialGradient id="wbg" cx="50%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="#0a1a0e"/>
+        <stop offset="100%" stop-color="#030806"/>
+      </radialGradient>
+      <radialGradient id="wmoon" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#c8e8b0" stop-opacity="0.22"/>
+        <stop offset="60%" stop-color="#90c870" stop-opacity="0.08"/>
+        <stop offset="100%" stop-color="#90c870" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="wglow">
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <rect width="360" height="360" fill="url(#wbg)"/>
+    <!-- 달무리 -->
+    <circle cx="268" cy="68" r="55" fill="url(#wmoon)"/>
+    <circle cx="268" cy="68" r="36" fill="rgba(200,232,170,.13)"/>
+    <circle cx="268" cy="68" r="24" fill="rgba(220,245,190,.1)"/>
+    <!-- 달 테두리 -->
+    <circle cx="268" cy="68" r="34" fill="none" stroke="rgba(180,220,140,.15)" stroke-width=".8"/>
+    <!-- 안개 층 -->
+    <ellipse cx="180" cy="290" rx="200" ry="40" fill="rgba(140,200,120,.04)"/>
+    <ellipse cx="180" cy="310" rx="200" ry="32" fill="rgba(120,180,100,.05)"/>
+    <ellipse cx="180" cy="330" rx="200" ry="24" fill="rgba(100,160,80,.06)"/>
+    <!-- 대나무 군락 — 굵기/위치 다양하게 -->
+    <!-- 뒷줄 (얇고 흐리게) -->
+    <line x1="90" y1="360" x2="94" y2="110" stroke="rgba(80,140,70,.12)" stroke-width="2" stroke-linecap="round"/>
+    <line x1="150" y1="360" x2="146" y2="90" stroke="rgba(80,140,70,.1)" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="270" y1="360" x2="274" y2="130" stroke="rgba(80,140,70,.1)" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="320" y1="360" x2="316" y2="160" stroke="rgba(80,140,70,.08)" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- 앞줄 (굵고 선명) -->
+    <line x1="128" y1="360" x2="122" y2="55" stroke="rgba(100,170,85,.32)" stroke-width="5" stroke-linecap="round"/>
+    <line x1="188" y1="360" x2="194" y2="42" stroke="rgba(110,180,90,.38)" stroke-width="6" stroke-linecap="round"/>
+    <line x1="238" y1="360" x2="232" y2="85" stroke="rgba(95,165,78,.28)" stroke-width="4.5" stroke-linecap="round"/>
+    <!-- 마디 (절간) -->
+    <line x1="118" y1="270" x2="132" y2="268" stroke="rgba(120,190,100,.5)" stroke-width="3"/>
+    <line x1="118" y1="195" x2="132" y2="193" stroke="rgba(120,190,100,.48)" stroke-width="3"/>
+    <line x1="118" y1="130" x2="132" y2="128" stroke="rgba(120,190,100,.42)" stroke-width="2.5"/>
+    <line x1="184" y1="245" x2="200" y2="242" stroke="rgba(130,200,108,.52)" stroke-width="3.5"/>
+    <line x1="184" y1="165" x2="200" y2="162" stroke="rgba(130,200,108,.48)" stroke-width="3.5"/>
+    <line x1="184" y1="100" x2="200" y2="97" stroke="rgba(130,200,108,.4)" stroke-width="3"/>
+    <line x1="226" y1="255" x2="240" y2="253" stroke="rgba(115,180,92,.44)" stroke-width="2.8"/>
+    <line x1="226" y1="185" x2="240" y2="183" stroke="rgba(115,180,92,.4)" stroke-width="2.8"/>
+    <!-- 잎 — 곡선 형태로 -->
+    <path d="M122 268 Q85 248 70 228" fill="none" stroke="rgba(100,175,82,.35)" stroke-width="2" stroke-linecap="round"/>
+    <path d="M122 268 Q105 230 120 210" fill="none" stroke="rgba(100,175,82,.3)" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M184 242 Q145 220 132 198" fill="none" stroke="rgba(110,185,90,.38)" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M184 162 Q210 138 228 148" fill="none" stroke="rgba(110,185,90,.32)" stroke-width="2" stroke-linecap="round"/>
+    <path d="M200 97 Q228 78 248 92" fill="none" stroke="rgba(110,185,90,.28)" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M194 42 Q222 28 246 44" fill="none" stroke="rgba(110,185,90,.25)" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M232 85 Q205 68 188 78" fill="none" stroke="rgba(100,175,82,.28)" stroke-width="1.8" stroke-linecap="round"/>
+    <!-- 새 (기러기) -->
+    <path d="M50 155 Q58 148 66 155" fill="none" stroke="rgba(180,220,150,.3)" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M74 148 Q84 140 94 148" fill="none" stroke="rgba(180,220,150,.25)" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- 한자 — 크고 반투명 -->
+    <text x="50" y="345" font-family="serif" font-size="96" fill="rgba(100,180,80,.06)" font-weight="200" letter-spacing="-4">木</text>
+    <!-- 사주 문자 장식 -->
+    <text x="316" y="300" font-family="serif" font-size="13" fill="rgba(160,210,130,.18)" text-anchor="middle">사주팔자</text>
   </svg>`,
 
   'Fire': `<svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
-    <rect width="360" height="360" fill="#0e0705"/>
-    <!-- 달 -->
-    <circle cx="280" cy="70" r="40" fill="rgba(255,200,100,.07)"/>
-    <circle cx="280" cy="70" r="28" fill="rgba(255,180,60,.06)"/>
-    <!-- 불꽃 메인 -->
-    <path d="M180 340 Q140 280 155 230 Q130 260 125 200 Q155 240 160 180 Q140 210 145 150 Q170 200 175 130 Q180 80 180 50 Q185 80 185 130 Q190 200 215 150 Q220 210 200 180 Q205 240 230 200 Q225 260 200 230 Q215 280 180 340Z"
-      fill="rgba(200,80,30,.2)" />
-    <path d="M180 320 Q155 270 168 225 Q148 248 150 200 Q168 230 172 175 Q178 130 180 100 Q182 130 188 175 Q192 230 210 200 Q212 248 192 225 Q205 270 180 320Z"
-      fill="rgba(220,120,40,.22)"/>
-    <path d="M180 290 Q168 255 174 225 Q163 242 165 210 Q175 235 178 200 Q180 170 180 150 Q180 170 182 200 Q185 235 195 210 Q197 242 186 225 Q192 255 180 290Z"
-      fill="rgba(240,180,60,.18)"/>
-    <!-- 불씨 -->
-    <circle cx="155" cy="180" r="2.5" fill="rgba(255,150,50,.25)"/>
-    <circle cx="200" cy="160" r="2" fill="rgba(255,150,50,.2)"/>
-    <circle cx="165" cy="140" r="1.8" fill="rgba(255,200,80,.2)"/>
-    <circle cx="195" cy="200" r="1.5" fill="rgba(255,150,50,.2)"/>
-    <!-- 연기 -->
-    <path d="M175 50 Q170 30 178 20 Q185 15 182 5" fill="none" stroke="rgba(200,150,80,.08)" stroke-width="3" stroke-linecap="round"/>
-    <path d="M185 45 Q192 25 186 12" fill="none" stroke="rgba(200,150,80,.06)" stroke-width="2" stroke-linecap="round"/>
-    <!-- 오행 문자 -->
-    <text x="180" y="320" text-anchor="middle" font-family="serif" font-size="48" fill="rgba(200,80,30,.08)" font-weight="200">火</text>
+    <defs>
+      <radialGradient id="fbg" cx="50%" cy="60%" r="80%">
+        <stop offset="0%" stop-color="#160a04"/>
+        <stop offset="100%" stop-color="#080404"/>
+      </radialGradient>
+      <radialGradient id="fcore" cx="50%" cy="70%" r="40%">
+        <stop offset="0%" stop-color="#e06020" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="#e06020" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="fblur"><feGaussianBlur stdDeviation="4"/></filter>
+      <filter id="fglow"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <rect width="360" height="360" fill="url(#fbg)"/>
+    <!-- 불 기운 배경 glow -->
+    <ellipse cx="180" cy="260" rx="90" ry="70" fill="url(#fcore)"/>
+    <!-- 연기 흔적 (상단) -->
+    <path d="M168 30 Q162 10 170 -5" fill="none" stroke="rgba(160,100,60,.08)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M180 20 Q178 2 184 -8" fill="none" stroke="rgba(160,100,60,.06)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M193 28 Q198 8 192 -5" fill="none" stroke="rgba(160,100,60,.07)" stroke-width="5" stroke-linecap="round"/>
+    <!-- 불꽃 외부 (가장 크고 흐리게) -->
+    <path d="M180 340 Q125 268 142 208 Q108 248 104 182 Q142 232 148 162 Q120 198 128 132 Q158 188 165 108 Q172 58 180 30 Q188 58 195 108 Q202 188 232 132 Q240 198 212 162 Q218 232 256 182 Q256 248 218 208 Q235 268 180 340Z"
+          fill="rgba(180,65,20,.16)"/>
+    <!-- 불꽃 중간 -->
+    <path d="M180 318 Q148 258 162 210 Q138 238 140 192 Q160 222 165 170 Q174 120 180 88 Q186 120 195 170 Q200 222 220 192 Q222 238 198 210 Q212 258 180 318Z"
+          fill="rgba(210,95,30,.22)"/>
+    <!-- 불꽃 내부 -->
+    <path d="M180 295 Q160 250 168 218 Q152 238 155 206 Q168 228 172 188 Q178 150 180 126 Q182 150 188 188 Q192 228 205 206 Q208 238 192 218 Q200 250 180 295Z"
+          fill="rgba(235,140,45,.26)"/>
+    <!-- 불꽃 코어 (가장 밝게) -->
+    <path d="M180 268 Q168 238 173 215 Q162 230 165 210 Q174 228 177 200 Q180 175 180 158 Q180 175 183 200 Q186 228 195 210 Q198 230 187 215 Q192 238 180 268Z"
+          fill="rgba(248,185,70,.22)" filter="url(#fglow)"/>
+    <!-- 불씨 파티클 -->
+    <circle cx="148" cy="175" r="2.5" fill="rgba(255,160,60,.35)"/>
+    <circle cx="158" cy="148" r="1.8" fill="rgba(255,200,80,.3)"/>
+    <circle cx="172" cy="122" r="1.5" fill="rgba(255,210,90,.28)"/>
+    <circle cx="210" cy="162" r="2" fill="rgba(255,150,50,.3)"/>
+    <circle cx="198" cy="138" r="1.6" fill="rgba(255,180,70,.27)"/>
+    <circle cx="192" cy="108" r="1.3" fill="rgba(255,210,90,.25)"/>
+    <circle cx="165" cy="95" r="1.2" fill="rgba(255,200,80,.22)"/>
+    <!-- 아래 불기운 -->
+    <ellipse cx="180" cy="340" rx="60" ry="15" fill="rgba(180,60,15,.12)"/>
+    <!-- 한자 -->
+    <text x="52" y="346" font-family="serif" font-size="96" fill="rgba(200,70,20,.06)" font-weight="200">火</text>
+    <text x="316" y="300" font-family="serif" font-size="13" fill="rgba(220,140,80,.18)" text-anchor="middle">사주팔자</text>
   </svg>`,
 
   'Earth': `<svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
-    <rect width="360" height="360" fill="#0b0906"/>
-    <!-- 산 실루엣 -->
-    <path d="M0 360 L0 220 Q60 180 90 200 Q120 160 150 120 Q180 70 180 60 Q210 110 240 140 Q265 165 290 180 Q320 195 360 220 L360 360Z"
-      fill="rgba(140,110,70,.12)"/>
-    <path d="M30 360 L50 240 Q100 210 130 230 Q155 200 175 165 Q185 145 188 130 Q200 160 220 185 Q250 210 290 230 Q320 245 340 260 L360 360Z"
-      fill="rgba(160,120,70,.1)"/>
-    <!-- 달 -->
-    <circle cx="60" cy="80" r="38" fill="rgba(220,190,130,.07)"/>
-    <!-- 소나무 실루엣 -->
-    <line x1="88" y1="200" x2="88" y2="280" stroke="rgba(100,80,50,.3)" stroke-width="3"/>
-    <polygon points="88,200 68,240 108,240" fill="rgba(80,100,60,.2)"/>
-    <polygon points="88,185 62,228 114,228" fill="rgba(80,100,60,.18)"/>
-    <polygon points="88,165 58,215 118,215" fill="rgba(80,100,60,.15)"/>
-    <!-- 안개 띠 -->
-    <ellipse cx="180" cy="200" rx="200" ry="12" fill="rgba(200,180,130,.04)"/>
-    <ellipse cx="180" cy="240" rx="200" ry="10" fill="rgba(200,180,130,.03)"/>
-    <!-- 오행 문자 -->
-    <text x="260" y="160" text-anchor="middle" font-family="serif" font-size="44" fill="rgba(160,120,60,.1)" font-weight="200">土</text>
+    <defs>
+      <radialGradient id="ebg" cx="30%" cy="25%" r="80%">
+        <stop offset="0%" stop-color="#120e08"/>
+        <stop offset="100%" stop-color="#070503"/>
+      </radialGradient>
+      <radialGradient id="emoon" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#e8d4a0" stop-opacity="0.2"/>
+        <stop offset="100%" stop-color="#c8a860" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="360" height="360" fill="url(#ebg)"/>
+    <!-- 달 (좌상단) -->
+    <circle cx="72" cy="82" r="52" fill="url(#emoon)"/>
+    <circle cx="72" cy="82" r="38" fill="rgba(230,200,140,.12)"/>
+    <circle cx="72" cy="82" r="26" fill="rgba(240,215,160,.1)"/>
+    <circle cx="72" cy="82" r="36" fill="none" stroke="rgba(200,170,100,.12)" stroke-width=".8"/>
+    <!-- 원경 산군 (가장 연하게) -->
+    <path d="M0 360 L0 238 Q40 210 75 222 Q110 185 145 148 Q172 112 180 98 Q188 112 215 148 Q252 188 288 218 Q318 205 360 232 L360 360Z"
+          fill="rgba(100,80,48,.09)"/>
+    <!-- 중경 산군 -->
+    <path d="M0 360 L0 268 Q35 242 68 256 Q95 228 122 200 Q148 168 158 152 Q168 138 172 128 Q180 115 180 106 Q180 115 188 128 Q195 145 208 165 Q232 198 260 222 Q284 242 318 258 Q340 248 360 262 L360 360Z"
+          fill="rgba(120,95,55,.11)"/>
+    <!-- 근경 산군 (가장 진하게) -->
+    <path d="M0 360 L0 295 Q25 272 55 280 Q80 258 105 238 Q130 215 148 195 Q162 178 170 164 Q176 154 180 145 Q184 154 190 164 Q198 178 212 195 Q230 215 255 238 Q282 260 308 278 Q334 268 360 285 L360 360Z"
+          fill="rgba(145,112,65,.14)"/>
+    <!-- 안개 층 3단 -->
+    <ellipse cx="180" cy="200" rx="210" ry="14" fill="rgba(180,150,90,.05)"/>
+    <ellipse cx="180" cy="225" rx="210" ry="12" fill="rgba(170,140,82,.055)"/>
+    <ellipse cx="180" cy="248" rx="210" ry="10" fill="rgba(160,130,75,.06)"/>
+    <!-- 소나무 실루엣 (좌측) -->
+    <line x1="68" y1="295" x2="68" y2="210" stroke="rgba(90,68,40,.5)" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="68,210 44,256 92,256" fill="rgba(65,85,45,.28)"/>
+    <polygon points="68,195 38,244 98,244" fill="rgba(65,85,45,.24)"/>
+    <polygon points="68,176 34,230 102,230" fill="rgba(65,85,45,.2)"/>
+    <polygon points="68,154 28,214 108,214" fill="rgba(65,85,45,.16)"/>
+    <!-- 소나무 실루엣 (우측, 작게) -->
+    <line x1="295" y1="290" x2="295" y2="228" stroke="rgba(90,68,40,.35)" stroke-width="2.5" stroke-linecap="round"/>
+    <polygon points="295,228 276,262 314,262" fill="rgba(65,85,45,.2)"/>
+    <polygon points="295,216 272,254 318,254" fill="rgba(65,85,45,.17)"/>
+    <polygon points="295,200 268,243 322,243" fill="rgba(65,85,45,.14)"/>
+    <!-- 달빛 가닥 -->
+    <path d="M72 120 Q100 160 90 200" fill="none" stroke="rgba(220,190,130,.06)" stroke-width="20" stroke-linecap="round"/>
+    <!-- 한자 -->
+    <text x="52" y="346" font-family="serif" font-size="96" fill="rgba(160,125,65,.06)" font-weight="200">土</text>
+    <text x="316" y="300" font-family="serif" font-size="13" fill="rgba(200,170,110,.18)" text-anchor="middle">사주팔자</text>
   </svg>`,
 
   'Metal': `<svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
-    <rect width="360" height="360" fill="#090a0e"/>
-    <!-- 보름달 -->
-    <circle cx="180" cy="130" r="80" fill="rgba(200,210,240,.06)"/>
-    <circle cx="180" cy="130" r="72" fill="rgba(210,220,255,.05)"/>
-    <circle cx="180" cy="130" r="60" fill="rgba(220,225,255,.05)"/>
-    <!-- 달 표면 질감 -->
-    <circle cx="160" cy="115" r="18" fill="none" stroke="rgba(200,210,255,.04)" stroke-width="1"/>
-    <circle cx="200" cy="145" r="12" fill="none" stroke="rgba(200,210,255,.03)" stroke-width="1"/>
-    <circle cx="170" cy="150" r="8" fill="none" stroke="rgba(200,210,255,.04)" stroke-width="1"/>
-    <!-- 달빛 반사 수면 -->
-    <path d="M0 260 Q90 240 180 255 Q270 270 360 250 L360 360 L0 360Z" fill="rgba(180,190,230,.06)"/>
-    <!-- 수면 잔물결 -->
-    <path d="M60 275 Q120 265 180 272 Q240 278 300 268" fill="none" stroke="rgba(200,210,255,.08)" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M30 285 Q100 275 180 282 Q260 288 330 278" fill="none" stroke="rgba(200,210,255,.06)" stroke-width="1" stroke-linecap="round"/>
-    <!-- 달빛 수면 반사 -->
-    <path d="M165 255 Q175 258 180 270 Q185 258 195 255" fill="none" stroke="rgba(220,225,255,.12)" stroke-width="2" stroke-linecap="round"/>
-    <path d="M160 265 Q170 268 180 278 Q190 268 200 265" fill="none" stroke="rgba(220,225,255,.09)" stroke-width="1.5" stroke-linecap="round"/>
-    <!-- 새 실루엣 -->
-    <path d="M80 180 Q90 172 100 180" fill="none" stroke="rgba(200,210,255,.18)" stroke-width="1.8" stroke-linecap="round"/>
-    <path d="M110 170 Q122 162 134 170" fill="none" stroke="rgba(200,210,255,.15)" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M245 165 Q257 157 269 165" fill="none" stroke="rgba(200,210,255,.14)" stroke-width="1.5" stroke-linecap="round"/>
-    <!-- 오행 문자 -->
-    <text x="180" y="155" text-anchor="middle" font-family="serif" font-size="44" fill="rgba(200,210,255,.07)" font-weight="200">金</text>
+    <defs>
+      <radialGradient id="mbg" cx="50%" cy="40%" r="70%">
+        <stop offset="0%" stop-color="#0c0d14"/>
+        <stop offset="100%" stop-color="#050508"/>
+      </radialGradient>
+      <radialGradient id="mmoon" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#dde4ff" stop-opacity="0.22"/>
+        <stop offset="50%" stop-color="#b8c4f0" stop-opacity="0.1"/>
+        <stop offset="100%" stop-color="#8898e0" stop-opacity="0"/>
+      </radialGradient>
+      <filter id="mhalo"><feGaussianBlur stdDeviation="8"/></filter>
+    </defs>
+    <rect width="360" height="360" fill="url(#mbg)"/>
+    <!-- 달 후광 -->
+    <circle cx="180" cy="118" r="88" fill="rgba(180,195,245,.04)" filter="url(#mhalo)"/>
+    <!-- 달 본체 -->
+    <circle cx="180" cy="118" r="72" fill="url(#mmoon)"/>
+    <circle cx="180" cy="118" r="64" fill="rgba(215,225,255,.07)"/>
+    <circle cx="180" cy="118" r="54" fill="rgba(225,232,255,.06)"/>
+    <!-- 달 테두리 -->
+    <circle cx="180" cy="118" r="70" fill="none" stroke="rgba(200,210,255,.1)" stroke-width=".8"/>
+    <!-- 달 표면 크레이터 -->
+    <circle cx="158" cy="102" r="16" fill="none" stroke="rgba(180,195,255,.07)" stroke-width="1"/>
+    <circle cx="198" cy="130" r="11" fill="none" stroke="rgba(180,195,255,.055)" stroke-width="1"/>
+    <circle cx="168" cy="138" r="7" fill="none" stroke="rgba(180,195,255,.06)" stroke-width=".8"/>
+    <circle cx="192" cy="96" r="9" fill="none" stroke="rgba(180,195,255,.05)" stroke-width=".8"/>
+    <!-- 수면 -->
+    <path d="M0 272 Q90 252 180 265 Q270 278 360 258 L360 360 L0 360Z"
+          fill="rgba(35,45,120,.18)"/>
+    <path d="M0 282 Q90 265 180 275 Q270 285 360 268 L360 360 L0 360Z"
+          fill="rgba(25,35,110,.12)"/>
+    <!-- 달빛 수면 반영 — 세로로 길게 -->
+    <path d="M172 265 Q175 272 178 285 Q180 295 180 308 Q180 295 182 285 Q185 272 188 265"
+          fill="none" stroke="rgba(220,228,255,.18)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M165 268 Q170 278 174 294 Q177 305 180 318 Q183 305 186 294 Q190 278 195 268"
+          fill="none" stroke="rgba(215,225,255,.1)" stroke-width="3" stroke-linecap="round"/>
+    <!-- 수면 물결 -->
+    <path d="M20 278 Q65 270 110 275 Q155 280 200 275 Q245 270 292 276 Q325 280 348 276"
+          fill="none" stroke="rgba(180,195,255,.1)" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M10 288 Q70 280 130 286 Q190 292 250 286 Q310 280 355 287"
+          fill="none" stroke="rgba(160,178,248,.08)" stroke-width="1" stroke-linecap="round"/>
+    <path d="M0 300 Q90 292 180 299 Q270 306 360 298"
+          fill="none" stroke="rgba(140,160,240,.07)" stroke-width="1" stroke-linecap="round"/>
+    <!-- 기러기 떼 (달 위로) -->
+    <path d="M55 72 Q63 65 71 72" fill="none" stroke="rgba(200,215,255,.28)" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M80 62 Q90 54 100 62" fill="none" stroke="rgba(200,215,255,.24)" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M112 56 Q124 47 136 56" fill="none" stroke="rgba(200,215,255,.2)" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M245 60 Q255 52 265 60" fill="none" stroke="rgba(200,215,255,.18)" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M276 70 Q287 62 298 70" fill="none" stroke="rgba(200,215,255,.15)" stroke-width="1.4" stroke-linecap="round"/>
+    <!-- 갈대 실루엣 -->
+    <line x1="28" y1="310" x2="32" y2="248" stroke="rgba(160,175,240,.15)" stroke-width="1.5" stroke-linecap="round"/>
+    <ellipse cx="30" cy="246" rx="4" ry="10" fill="rgba(160,175,240,.2)" transform="rotate(-8,30,246)"/>
+    <line x1="42" y1="318" x2="45" y2="255" stroke="rgba(160,175,240,.12)" stroke-width="1.3" stroke-linecap="round"/>
+    <ellipse cx="44" cy="253" rx="3.5" ry="9" fill="rgba(160,175,240,.18)" transform="rotate(5,44,253)"/>
+    <line x1="325" y1="312" x2="328" y2="252" stroke="rgba(160,175,240,.13)" stroke-width="1.4" stroke-linecap="round"/>
+    <ellipse cx="327" cy="250" rx="4" ry="10" fill="rgba(160,175,240,.18)" transform="rotate(10,327,250)"/>
+    <!-- 한자 -->
+    <text x="52" y="346" font-family="serif" font-size="96" fill="rgba(185,200,255,.05)" font-weight="200">金</text>
+    <text x="316" y="300" font-family="serif" font-size="13" fill="rgba(200,215,255,.18)" text-anchor="middle">사주팔자</text>
   </svg>`,
 
   'Water': `<svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
-    <rect width="360" height="360" fill="#050810"/>
-    <!-- 비 -->
-    <g opacity="0.18">
-      <line x1="60" y1="0" x2="40" y2="80" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="100" y1="20" x2="80" y2="100" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="140" y1="0" x2="120" y2="90" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="180" y1="10" x2="160" y2="95" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="220" y1="0" x2="200" y2="85" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="260" y1="15" x2="240" y2="100" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="300" y1="0" x2="280" y2="90" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="340" y1="20" x2="320" y2="105" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="80" y1="100" x2="60" y2="180" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="120" y1="110" x2="100" y2="190" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="160" y1="100" x2="140" y2="185" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="200" y1="105" x2="180" y2="188" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="240" y1="100" x2="220" y2="184" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="280" y1="108" x2="260" y2="190" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
-      <line x1="320" y1="100" x2="300" y2="185" stroke="#8ab0d0" stroke-width="1" stroke-linecap="round"/>
+    <defs>
+      <radialGradient id="wabg" cx="50%" cy="30%" r="80%">
+        <stop offset="0%" stop-color="#060c1a"/>
+        <stop offset="100%" stop-color="#020408"/>
+      </radialGradient>
+      <linearGradient id="warain" x1="0%" y1="0%" x2="8%" y2="100%">
+        <stop offset="0%" stop-color="#8ab8e0" stop-opacity="0"/>
+        <stop offset="30%" stop-color="#8ab8e0" stop-opacity="0.2"/>
+        <stop offset="100%" stop-color="#8ab8e0" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <rect width="360" height="360" fill="url(#wabg)"/>
+    <!-- 비 — 여러 레이어로 깊이감 -->
+    <!-- 뒷줄 비 (흐리게) -->
+    <g opacity="0.1" stroke="#a0c8e8" stroke-linecap="round">
+      <line x1="45" y1="0" x2="25" y2="75" stroke-width=".8"/>
+      <line x1="90" y1="10" x2="70" y2="85" stroke-width=".8"/>
+      <line x1="135" y1="0" x2="115" y2="78" stroke-width=".8"/>
+      <line x1="180" y1="5" x2="160" y2="82" stroke-width=".8"/>
+      <line x1="225" y1="0" x2="205" y2="76" stroke-width=".8"/>
+      <line x1="270" y1="8" x2="250" y2="84" stroke-width=".8"/>
+      <line x1="315" y1="0" x2="295" y2="78" stroke-width=".8"/>
+      <line x1="68" y1="88" x2="48" y2="165" stroke-width=".8"/>
+      <line x1="113" y1="95" x2="93" y2="172" stroke-width=".8"/>
+      <line x1="158" y1="88" x2="138" y2="168" stroke-width=".8"/>
+      <line x1="203" y1="92" x2="183" y2="170" stroke-width=".8"/>
+      <line x1="248" y1="88" x2="228" y2="168" stroke-width=".8"/>
+      <line x1="293" y1="94" x2="273" y2="172" stroke-width=".8"/>
+      <line x1="80" y1="178" x2="60" y2="252" stroke-width=".8"/>
+      <line x1="125" y1="184" x2="105" y2="258" stroke-width=".8"/>
+      <line x1="170" y1="178" x2="150" y2="255" stroke-width=".8"/>
+      <line x1="215" y1="182" x2="195" y2="258" stroke-width=".8"/>
+      <line x1="260" y1="178" x2="240" y2="254" stroke-width=".8"/>
+      <line x1="305" y1="184" x2="285" y2="258" stroke-width=".8"/>
+    </g>
+    <!-- 앞줄 비 (선명하게) -->
+    <g opacity="0.22" stroke="#b0d0f0" stroke-linecap="round">
+      <line x1="68" y1="0" x2="46" y2="82" stroke-width="1.2"/>
+      <line x1="112" y1="15" x2="90" y2="95" stroke-width="1.2"/>
+      <line x1="158" y1="0" x2="136" y2="84" stroke-width="1.2"/>
+      <line x1="202" y1="8" x2="180" y2="90" stroke-width="1.2"/>
+      <line x1="248" y1="0" x2="226" y2="84" stroke-width="1.2"/>
+      <line x1="292" y1="12" x2="270" y2="94" stroke-width="1.2"/>
+      <line x1="336" y1="0" x2="314" y2="86" stroke-width="1.2"/>
+      <line x1="92" y1="95" x2="70" y2="178" stroke-width="1.2"/>
+      <line x1="136" y1="100" x2="114" y2="182" stroke-width="1.2"/>
+      <line x1="182" y1="95" x2="160" y2="178" stroke-width="1.2"/>
+      <line x1="226" y1="98" x2="204" y2="180" stroke-width="1.2"/>
+      <line x1="270" y1="95" x2="248" y2="178" stroke-width="1.2"/>
+      <line x1="314" y1="100" x2="292" y2="182" stroke-width="1.2"/>
+      <line x1="105" y1="188" x2="82" y2="270" stroke-width="1.2"/>
+      <line x1="148" y1="192" x2="126" y2="274" stroke-width="1.2"/>
+      <line x1="192" y1="188" x2="170" y2="270" stroke-width="1.2"/>
+      <line x1="236" y1="192" x2="214" y2="274" stroke-width="1.2"/>
+      <line x1="280" y1="188" x2="258" y2="270" stroke-width="1.2"/>
+      <line x1="324" y1="192" x2="302" y2="274" stroke-width="1.2"/>
     </g>
     <!-- 강 수면 -->
-    <path d="M0 280 Q80 265 180 275 Q280 285 360 270 L360 360 L0 360Z" fill="rgba(40,80,140,.18)"/>
+    <path d="M0 285 Q80 268 180 278 Q280 288 360 272 L360 360 L0 360Z"
+          fill="rgba(20,55,130,.22)"/>
+    <path d="M0 295 Q80 280 180 288 Q280 296 360 282 L360 360 L0 360Z"
+          fill="rgba(15,42,110,.14)"/>
+    <!-- 안개 낀 산 실루엣 -->
+    <path d="M0 272 Q55 238 95 250 Q130 215 165 188 Q180 172 180 165 Q180 172 195 188 Q232 218 268 248 Q308 235 360 268 L360 290 Q270 278 180 284 Q90 290 0 282Z"
+          fill="rgba(18,40,100,.18)"/>
+    <!-- 파문 (빗방울) -->
+    <ellipse cx="95" cy="284" rx="12" ry="4" fill="none" stroke="rgba(130,175,230,.12)" stroke-width="1"/>
+    <ellipse cx="95" cy="284" rx="22" ry="7" fill="none" stroke="rgba(120,165,220,.08)" stroke-width=".8"/>
+    <ellipse cx="262" cy="290" rx="10" ry="3.5" fill="none" stroke="rgba(130,175,230,.1)" stroke-width="1"/>
+    <ellipse cx="262" cy="290" rx="18" ry="6" fill="none" stroke="rgba(120,165,220,.07)" stroke-width=".8"/>
+    <ellipse cx="180" cy="286" rx="8" ry="3" fill="none" stroke="rgba(130,175,230,.12)" stroke-width="1"/>
+    <ellipse cx="180" cy="286" rx="15" ry="5" fill="none" stroke="rgba(120,165,220,.08)" stroke-width=".8"/>
     <!-- 물결 -->
-    <path d="M0 285 Q45 278 90 283 Q135 288 180 283 Q225 278 270 283 Q315 288 360 283" fill="none" stroke="rgba(100,160,220,.12)" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M0 295 Q60 288 120 293 Q180 298 240 293 Q300 288 360 294" fill="none" stroke="rgba(100,160,220,.09)" stroke-width="1" stroke-linecap="round"/>
-    <path d="M0 308 Q90 300 180 307 Q270 314 360 306" fill="none" stroke="rgba(100,160,220,.07)" stroke-width="1" stroke-linecap="round"/>
-    <!-- 원형 파문 -->
-    <circle cx="180" cy="280" r="20" fill="none" stroke="rgba(100,170,230,.1)" stroke-width="1"/>
-    <circle cx="180" cy="280" r="35" fill="none" stroke="rgba(100,170,230,.07)" stroke-width="1"/>
-    <circle cx="180" cy="280" r="52" fill="none" stroke="rgba(100,170,230,.05)" stroke-width="1"/>
-    <!-- 안개 산 실루엣 -->
-    <path d="M0 260 Q60 220 100 235 Q140 200 180 180 Q220 200 260 225 Q300 215 360 250 L360 280 Q270 270 180 275 Q90 280 0 270Z"
-      fill="rgba(30,50,100,.15)"/>
-    <!-- 오행 문자 -->
-    <text x="180" y="250" text-anchor="middle" font-family="serif" font-size="44" fill="rgba(60,120,200,.1)" font-weight="200">水</text>
+    <path d="M0 292 Q45 285 90 290 Q135 295 180 290 Q225 285 270 291 Q315 296 360 290"
+          fill="none" stroke="rgba(120,168,228,.1)" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M0 305 Q60 298 120 303 Q180 308 240 303 Q300 298 360 305"
+          fill="none" stroke="rgba(100,148,215,.08)" stroke-width="1" stroke-linecap="round"/>
+    <!-- 한자 -->
+    <text x="52" y="346" font-family="serif" font-size="96" fill="rgba(60,120,210,.06)" font-weight="200">水</text>
+    <text x="316" y="300" font-family="serif" font-size="13" fill="rgba(150,195,240,.18)" text-anchor="middle">사주팔자</text>
   </svg>`
 };
 
@@ -2886,6 +3111,48 @@ function buildArtCard(dp){
   });
   var dmEl = document.getElementById('dmTitle');
   if(dmEl) observer.observe(dmEl, {childList:true, characterData:true, subtree:true});
+}
+
+// ── PAYWALL ACTIONS ──
+function purchaseFull(){
+  // TODO: Paddle checkout link
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#27ae60;color:white;padding:11px 20px;border-radius:8px;font-family:DM Mono,monospace;font-size:.62rem;letter-spacing:.15em;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3)';
+  toast.textContent = '✓ Payment successful — full reading unlocked';
+  document.body.appendChild(toast);
+  doUnlock('paid-full');
+  setTimeout(()=>toast.remove(), 3000);
+}
+
+function openSectionPicker(){
+  document.getElementById('sectionPicker').style.display = '';
+  document.getElementById('shareFlow').style.display = 'none';
+}
+
+function openShareFlow(){
+  document.getElementById('shareFlow').style.display = '';
+  document.getElementById('sectionPicker').style.display = 'none';
+  if(isShareUsed()) showShareUsedNotice();
+}
+
+function purchaseSection(key){
+  // TODO: Paddle checkout link with section param
+  document.getElementById('sectionPicker').style.display = 'none';
+  unlockSingleSection(key);
+  const names = {love:'Love',career:'Career',health:'Health',luck:'Luck Cycles',year:'This Year'};
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#27ae60;color:white;padding:11px 20px;border-radius:8px;font-family:DM Mono,monospace;font-size:.62rem;letter-spacing:.15em;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3)';
+  toast.textContent = '✓ ' + (names[key]||key) + ' section unlocked';
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(), 3000);
+}
+
+function selectShareSection(key){
+  if(isShareUsed()){showShareUsedNotice();return;}
+  window._shareSectionKey = key;
+  document.getElementById('shareFlowStep1').style.display = 'none';
+  document.getElementById('shareFlowStep2').style.display = '';
+  document.getElementById('shareConfirmRow').style.display = 'none';
 }
 
 </script>

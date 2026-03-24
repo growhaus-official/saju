@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Pricing — SAJU</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--surface:#13121a;--surface2:#1c1b26;--border:rgba(255,255,255,.07);--paper:#f0ebe0;--muted:rgba(240,235,224,.42);--red:#c0392b;--gold:#c8a96a;--gold-dim:rgba(200,169,106,.12);--jade:#27ae60;--radius:14px;--radius-sm:8px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--paper);font-family:'Inter',system-ui,sans-serif;min-height:100vh;max-width:480px;margin:0 auto;font-size:15px;line-height:1.6;padding-bottom:60px}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.topbar{position:sticky;top:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 16px;height:52px;background:rgba(10,10,15,.95);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.topbar-logo{font-family:'Noto Serif KR',serif;font-size:1.05rem;font-weight:300;letter-spacing:.25em;cursor:pointer;text-decoration:none;color:var(--paper)}
+.topbar-logo span{color:var(--gold)}
+.topbar-back{display:flex;align-items:center;gap:5px;background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;text-decoration:none}
+
+.hero{padding:44px 20px 32px;text-align:center;border-bottom:1px solid var(--border)}
+.eyebrow{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.4em;color:var(--red);text-transform:uppercase;display:block;margin-bottom:14px}
+.hero h1{font-family:'Noto Serif KR',serif;font-size:2rem;font-weight:200;line-height:1.2;margin-bottom:10px}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero p{font-size:.9rem;color:var(--muted);line-height:1.75;max-width:320px;margin:0 auto}
+
+.pricing-wrap{padding:24px 16px}
+
+.plan-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:22px 20px;margin-bottom:12px;position:relative;animation:fadeUp .4s ease both}
+.plan-card.featured{border-color:rgba(200,169,106,.4);background:rgba(200,169,106,.04)}
+.plan-card.featured::before{content:'Most popular';position:absolute;top:-1px;left:18px;font-family:'DM Mono',monospace;font-size:.48rem;letter-spacing:.2em;background:var(--gold);color:#0a0a0f;padding:3px 10px;border-radius:0 0 5px 5px;font-weight:700;text-transform:uppercase}
+
+.plan-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;padding-top:8px}
+.plan-name{font-size:1rem;font-weight:600;margin-bottom:3px}
+.plan-tagline{font-size:.78rem;color:var(--muted)}
+.plan-price-wrap{text-align:right;flex-shrink:0}
+.plan-price{font-size:1.6rem;font-weight:700;color:var(--gold);line-height:1}
+.plan-orig{font-size:.75rem;color:var(--muted);text-decoration:line-through;display:block;margin-bottom:1px}
+.plan-period{font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+
+.plan-divider{height:1px;background:var(--border);margin:14px 0}
+
+.plan-includes{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.plan-item{display:flex;align-items:flex-start;gap:9px;font-size:.83rem;color:rgba(240,235,224,.7)}
+.plan-item-icon{flex-shrink:0;margin-top:1px;width:16px;text-align:center;font-size:.8rem}
+.plan-item strong{color:var(--paper);font-weight:500}
+
+.plan-btn{width:100%;padding:14px;background:var(--gold);color:#0a0a0f;border:none;border-radius:var(--radius-sm);font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-weight:700;transition:opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.plan-btn:active{opacity:.85}
+.plan-btn.secondary{background:transparent;border:1px solid var(--border);color:var(--muted)}
+
+.free-section{margin:20px 16px 0;background:rgba(39,174,96,.06);border:1px solid rgba(39,174,96,.18);border-radius:var(--radius);padding:18px 16px}
+.free-title{font-size:.9rem;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.free-desc{font-size:.8rem;color:var(--muted);line-height:1.65;margin-bottom:12px}
+.free-items{display:flex;flex-direction:column;gap:6px}
+.free-item{font-size:.8rem;color:rgba(240,235,224,.6);display:flex;align-items:center;gap:8px}
+
+.faq-section{padding:28px 16px 0}
+.faq-title{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.3em;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+.faq-item{border-bottom:1px solid var(--border);padding:14px 0}
+.faq-q{font-size:.88rem;font-weight:500;margin-bottom:6px}
+.faq-a{font-size:.8rem;color:var(--muted);line-height:1.7}
+
+.legal-links{display:flex;justify-content:center;gap:16px;padding:28px 16px 8px;flex-wrap:wrap}
+.legal-links a{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.15em;color:rgba(240,235,224,.25);text-transform:uppercase;text-decoration:none}
+.legal-links a:hover{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html" class="topbar-logo">사<span>주</span> SAJU</a>
+  <a href="index.html" class="topbar-back">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Back
+  </a>
+</div>
+
+<div class="hero">
+  <span class="eyebrow">Simple Pricing</span>
+  <h1>Your reading.<br><em>Your choice.</em></h1>
+  <p>Two sections are always free. Unlock the rest with a one-time payment.</p>
+</div>
+
+<div class="pricing-wrap">
+
+  <!-- PLAN 1: Full Reading -->
+  <div class="plan-card featured" style="animation-delay:.05s">
+    <div class="plan-header">
+      <div>
+        <div class="plan-name">Complete Reading</div>
+        <div class="plan-tagline">Everything, unlocked permanently</div>
+      </div>
+      <div class="plan-price-wrap">
+        <span class="plan-orig">$9.99</span>
+        <div class="plan-price">$4.99</div>
+        <span class="plan-period">one-time</span>
+      </div>
+    </div>
+    <div class="plan-divider"></div>
+    <div class="plan-includes">
+      <div class="plan-item"><span class="plan-item-icon">✓</span><span>Your <strong>core personality</strong> analysis &amp; trait scores</span></div>
+      <div class="plan-item"><span class="plan-item-icon">✓</span><span>Your <strong>elemental energy profile</strong> &amp; blind spots</span></div>
+      <div class="plan-item"><span class="plan-item-icon">✓</span><span><strong>Love &amp; relationships</strong> — patterns, partner profile, what you need</span></div>
+      <div class="plan-item"><span class="plan-item-icon">✓</span><span><strong>Career &amp; wealth</strong> — best-fit roles, money patterns, ambition style</span></div>
+      <div class="plan-item"><span class="plan-item-icon">✓</span><span><strong>Health &amp; vitality</strong> — stress patterns, energy rhythms, wellness advice</span></div>
+      <div class="plan-item"><span class="plan-item-icon">✓</span><span><strong>All 8 luck cycles</strong> — your full 80-year destiny arc</span></div>
+      <div class="plan-item"><span class="plan-item-icon">✓</span><span><strong>12-month forecast</strong> — best windows for moves &amp; decisions</span></div>
+      <div class="plan-item"><span class="plan-item-icon">✓</span><span><strong>Compatibility check</strong> — add a second person's chart</span></div>
+    </div>
+    <a href="index.html" class="plan-btn">Get My Full Reading — $4.99</a>
+  </div>
+
+  <!-- PLAN 2: Single Section -->
+  <div class="plan-card" style="animation-delay:.12s">
+    <div class="plan-header">
+      <div>
+        <div class="plan-name">Single Section</div>
+        <div class="plan-tagline">One answer, unlocked forever</div>
+      </div>
+      <div class="plan-price-wrap">
+        <div class="plan-price">$1.99</div>
+        <span class="plan-period">one-time</span>
+      </div>
+    </div>
+    <div class="plan-divider"></div>
+    <div class="plan-includes">
+      <div class="plan-item"><span class="plan-item-icon">→</span><span>Choose any one locked section</span></div>
+      <div class="plan-item"><span class="plan-item-icon">→</span><span>Love, Career, Health, Luck Cycles, or Year Forecast</span></div>
+      <div class="plan-item"><span class="plan-item-icon">→</span><span>Good if you have one specific question</span></div>
+    </div>
+    <a href="index.html" class="plan-btn secondary">Start Reading — choose section</a>
+  </div>
+
+</div>
+
+<!-- FREE TIER -->
+<div class="free-section">
+  <div class="free-title">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#27ae60" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Always included — no payment needed
+  </div>
+  <div class="free-desc">Two full sections are free for everyone, every time. No login, no credit card, no catch.</div>
+  <div class="free-items">
+    <div class="free-item">✓ Core personality analysis (full)</div>
+    <div class="free-item">✓ Elemental energy profile (full)</div>
+    <div class="free-item">✓ Four Pillars chart &amp; element balance</div>
+    <div class="free-item">✓ All calculations run in your browser — nothing stored</div>
+  </div>
+</div>
+
+
+
+<!-- FAQ -->
+<div class="faq-section">
+  <div class="faq-title">Common questions</div>
+  <div class="faq-item">
+    <div class="faq-q">Is this a subscription?</div>
+    <div class="faq-a">No. Every purchase is a one-time charge. You pay once and the reading is yours permanently — no recurring charges, ever.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What payment methods are accepted?</div>
+    <div class="faq-a">All major credit and debit cards (Visa, Mastercard, Amex), Apple Pay, Google Pay, and PayPal.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Can I get a refund?</div>
+    <div class="faq-a">Refunds are available within 7 days only if a technical error prevented you from accessing your reading — proof via screenshot is required. Once the paid content has been accessed, refunds are not available. See our <a href="refund.html" style="color:var(--gold)">refund policy</a> for full details.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">How is my reading generated?</div>
+    <div class="faq-a">Your birth data is used to calculate your Four Pillars chart using traditional Korean Saju methodology. The interpretation is generated by AI (Llama 3.3 70B via Groq) and delivered instantly. All calculations happen in your browser — your data is never stored on our servers.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Is Saju the same as Western astrology?</div>
+    <div class="faq-a">No. Saju (Korean Four Pillars) is based on the exact year, month, day, and hour of birth mapped to a 60-year cycle of Heavenly Stems and Earthly Branches. It's a distinct tradition from Western sun-sign astrology.</div>
+  </div>
+</div>
+
+<div class="legal-links">
+  <a href="terms.html">Terms of Service</a>
+  <a href="privacy.html">Privacy Policy</a>
+  <a href="refund.html">Refund Policy</a>
+</div>
+
+</body>
+</html>

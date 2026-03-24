@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Emma's Saju Reading — SAJU</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;600&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0f; --surface:#13121a; --surface2:#1c1b26;
+  --border:rgba(255,255,255,.07); --border-gold:rgba(200,169,106,.22);
+  --paper:#f0ebe0; --muted:rgba(240,235,224,.42); --faint:rgba(240,235,224,.1);
+  --red:#c0392b; --gold:#c8a96a; --gold-dim:rgba(200,169,106,.12);
+  --jade:#27ae60; --radius:14px; --radius-sm:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--bg); color:var(--paper);
+  font-family:'Inter',system-ui,sans-serif;
+  min-height:100vh; max-width:480px; margin:0 auto;
+  overflow-x:hidden; font-size:15px; line-height:1.6;
+  padding-bottom:160px;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes slideUp{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:500;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;height:52px;
+  background:rgba(10,10,15,.95);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+.topbar-logo{font-family:'Noto Serif KR',serif;font-size:1.05rem;font-weight:300;letter-spacing:.25em;cursor:pointer}
+.topbar-logo span{color:var(--gold)}
+.topbar-back{
+  display:flex;align-items:center;gap:5px;
+  background:none;border:none;color:var(--muted);
+  font-family:'DM Mono',monospace;font-size:.58rem;
+  letter-spacing:.15em;text-transform:uppercase;cursor:pointer;
+}
+
+/* ── PERSON HEADER ── */
+.person-header{
+  padding:20px 16px 16px;
+  background:linear-gradient(180deg,rgba(28,20,45,.7) 0%,transparent 100%);
+  position:relative;
+}
+.person-row{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.person-avatar{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(200,169,106,.35),rgba(192,57,43,.25));
+  border:1.5px solid rgba(200,169,106,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Noto Serif KR',serif;font-size:1.15rem;color:var(--gold);
+}
+.person-name{font-size:1.05rem;font-weight:600;letter-spacing:-.01em}
+.person-meta{font-size:.72rem;color:var(--muted);margin-top:1px}
+.reading-type-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(200,169,106,.1);border:1px solid rgba(200,169,106,.2);
+  padding:4px 10px;border-radius:100px;margin-top:8px;
+  font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.2em;
+  color:var(--gold);text-transform:uppercase;
+}
+
+/* ── FOUR PILLARS TABLE ── */
+.pillars-section{padding:12px 16px 0}
+.section-eyebrow{
+  font-family:'DM Mono',monospace;font-size:.52rem;
+  letter-spacing:.32em;color:var(--muted);text-transform:uppercase;
+  margin-bottom:10px;
+}
+.pillars-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.p-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 6px 10px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.p-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.p-card:nth-child(1)::after{background:rgba(192,57,43,.7)}
+.p-card:nth-child(2)::after{background:rgba(200,169,106,.7)}
+.p-card:nth-child(3)::after{background:rgba(59,130,246,.7)}
+.p-card:nth-child(4)::after{background:rgba(99,102,241,.7)}
+.p-card.day-master{background:rgba(200,169,106,.07);border-color:rgba(200,169,106,.3)}
+.p-pos{font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:7px}
+.p-stem{font-family:'Noto Serif KR',serif;font-size:1.7rem;font-weight:300;color:var(--gold);line-height:1;display:block;margin-bottom:1px}
+.p-stem-el{font-size:.5rem;color:rgba(200,169,106,.45);font-family:'DM Mono',monospace;display:block;margin-bottom:7px}
+.p-branch{font-family:'Noto Serif KR',serif;font-size:1.25rem;font-weight:300;color:var(--paper);line-height:1;display:block;margin-bottom:2px}
+.p-animal{font-size:.5rem;color:var(--muted);font-family:'DM Mono',monospace;display:block}
+
+/* ── ELEMENT BAR ── */
+.el-bar-section{padding:12px 16px 0}
+.el-track{height:6px;border-radius:3px;background:var(--surface2);overflow:hidden;display:flex;gap:2px;margin-bottom:7px}
+.el-seg{height:100%;border-radius:2px}
+.el-legend{display:flex;gap:10px;flex-wrap:wrap}
+.el-item{display:flex;align-items:center;gap:4px;font-size:.65rem;color:var(--muted)}
+.el-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* ── DIVIDER ── */
+.sep{display:flex;align-items:center;gap:10px;padding:10px 16px;margin:2px 0}
+.sep-line{flex:1;height:1px;background:var(--border)}
+.sep-sym{font-size:.65rem;color:rgba(200,169,106,.18);font-family:'Noto Serif KR',serif}
+
+/* ── READING CARD ── */
+.r-section{padding:0 16px;margin-bottom:6px}
+.r-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+  animation:fadeUp .45s ease both;
+}
+.r-card-head{
+  display:flex;align-items:center;gap:11px;
+  padding:14px 16px 12px;border-bottom:1px solid var(--border);
+}
+.r-icon{
+  width:34px;height:34px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.05rem;flex-shrink:0;
+}
+.r-tag{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.25em;text-transform:uppercase;display:block;margin-bottom:2px}
+.r-title{font-size:.92rem;font-weight:600;letter-spacing:-.01em}
+
+/* body content */
+.r-body{padding:14px 16px}
+.r-para{font-size:.88rem;line-height:1.8;color:rgba(240,235,224,.7);margin-bottom:10px}
+.r-para:last-child{margin-bottom:0}
+.r-callout{
+  background:var(--gold-dim);border-left:2px solid rgba(200,169,106,.4);
+  padding:11px 13px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+  margin-top:12px;
+}
+.r-callout p{font-size:.82rem;font-style:italic;color:rgba(240,235,224,.58);line-height:1.7}
+
+/* ── INSIGHT BULLETS ── */
+.insight-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.insight-item{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:10px 12px;background:var(--surface2);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+}
+.insight-icon{font-size:.85rem;flex-shrink:0;margin-top:1px;width:18px;text-align:center}
+.insight-text{font-size:.83rem;line-height:1.65;color:rgba(240,235,224,.65)}
+.insight-text strong{color:var(--paper);font-weight:500}
+
+/* ── SCORE BAR ── */
+.score-grid{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+.score-row{display:flex;align-items:center;gap:10px}
+.score-label{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;width:68px;flex-shrink:0}
+.score-bar-wrap{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:3px;transition:width .8s ease .3s}
+.score-val{font-family:'DM Mono',monospace;font-size:.56rem;color:var(--muted);width:26px;text-align:right;flex-shrink:0}
+
+/* ── EXPAND / DEEP DIVE ── */
+.expand-preview{
+  /* short preview that's always visible */
+}
+.expand-content{
+  display:none;
+  border-top:1px solid var(--border);
+  padding:14px 16px;
+  animation:fadeIn .3s ease;
+}
+.expand-content.open{display:block}
+
+.more-btn{
+  width:100%;padding:11px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:none;border:none;border-top:1px solid var(--border);
+  color:var(--gold);cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;
+  transition:background .15s;
+}
+.more-btn:active{background:rgba(200,169,106,.04)}
+.more-btn .arr{transition:transform .25s;font-size:.8rem;opacity:.6}
+.more-btn.open .arr{transform:rotate(180deg)}
+
+/* ── PREMIUM GATE ── */
+/* Sections that need payment: blurred preview + CTA */
+.premium-section{position:relative}
+.premium-blur{
+  filter:blur(5px);
+  pointer-events:none;
+  user-select:none;
+  opacity:.55;
+}
+.premium-gate{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;
+  background:linear-gradient(to bottom,rgba(10,10,15,.3) 0%,rgba(10,10,15,.85) 50%,rgba(10,10,15,.97) 100%);
+  padding:20px;
+  text-align:center;
+}
+.gate-icon{font-size:1.6rem;margin-bottom:2px}
+.gate-title{font-size:.95rem;font-weight:600;letter-spacing:-.01em;margin-bottom:2px}
+.gate-sub{font-size:.78rem;color:var(--muted);line-height:1.6;max-width:240px}
+.gate-btn{
+  background:var(--gold);color:#0a0a0f;
+  border:none;padding:12px 28px;
+  font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;
+  border-radius:var(--radius-sm);cursor:pointer;margin-top:6px;
+  transition:opacity .2s,transform .15s;font-weight:600;
+  box-shadow:0 4px 20px rgba(200,169,106,.25);
+}
+.gate-btn:active{opacity:.85;transform:scale(.97)}
+.gate-free-note{font-size:.68rem;color:rgba(240,235,224,.28);font-style:italic}
+
+/* ── DAEWUN TIMELINE ── */
+.dw-timeline{display:flex;flex-direction:column;gap:0;margin-top:4px}
+.dw-item{
+  display:flex;gap:12px;padding:12px 0;
+  border-bottom:1px solid var(--border);position:relative;
+}
+.dw-item:last-child{border-bottom:none}
+.dw-spine{
+  display:flex;flex-direction:column;align-items:center;gap:0;
+  width:16px;flex-shrink:0;margin-top:4px;
+}
+.dw-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--surface2);border:1.5px solid rgba(255,255,255,.15);
+  flex-shrink:0;
+}
+.dw-dot.now{background:var(--gold);border-color:var(--gold);box-shadow:0 0 6px rgba(200,169,106,.5)}
+.dw-line{flex:1;width:1.5px;background:var(--border);margin-top:3px}
+.dw-content{flex:1}
+.dw-header{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.dw-pillar{font-family:'Noto Serif KR',serif;font-size:1.1rem;color:var(--gold)}
+.dw-years{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.12em;color:var(--muted)}
+.dw-now-chip{font-family:'DM Mono',monospace;font-size:.48rem;letter-spacing:.12em;background:rgba(200,169,106,.15);color:var(--gold);padding:2px 7px;border-radius:3px;text-transform:uppercase}
+.dw-theme{font-size:.8rem;font-weight:500;margin-bottom:3px}
+.dw-desc{font-size:.78rem;color:rgba(240,235,224,.5);line-height:1.6}
+
+/* ── YEAR FORECAST CALENDAR ── */
+.forecast-months{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
+.fmonth{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:9px 6px;text-align:center;
+}
+.fmonth.highlight{background:rgba(200,169,106,.1);border-color:rgba(200,169,106,.3)}
+.fmonth.caution{background:rgba(192,57,43,.07);border-color:rgba(192,57,43,.2)}
+.fmonth-name{font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.1em;color:var(--muted);display:block;margin-bottom:4px;text-transform:uppercase}
+.fmonth-dot{width:5px;height:5px;border-radius:50%;margin:0 auto 3px;background:var(--border)}
+.fmonth.highlight .fmonth-dot{background:var(--gold)}
+.fmonth.caution .fmonth-dot{background:var(--red);opacity:.6}
+.fmonth-label{font-size:.6rem;color:var(--muted);display:block}
+.fmonth.highlight .fmonth-label{color:var(--gold)}
+
+/* ── COMPATIBILITY TEASER ── */
+.compat-teaser{
+  margin:0 16px 6px;
+  background:linear-gradient(135deg,rgba(99,102,241,.1),rgba(200,169,106,.08));
+  border:1px solid rgba(99,102,241,.2);
+  border-radius:var(--radius);
+  padding:16px;
+  position:relative;overflow:hidden;
+}
+.compat-teaser::before{
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:100px;height:100px;
+  background:radial-gradient(circle,rgba(99,102,241,.15),transparent 70%);
+}
+.compat-row{display:flex;align-items:center;justify-content:space-between}
+.compat-text{}
+.compat-tag{font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.2em;color:#818cf8;text-transform:uppercase;display:block;margin-bottom:4px}
+.compat-title{font-size:.92rem;font-weight:600;margin-bottom:3px}
+.compat-sub{font-size:.75rem;color:var(--muted);line-height:1.5}
+.compat-btn{
+  background:rgba(99,102,241,.2);border:1px solid rgba(99,102,241,.35);
+  color:#a5b4fc;padding:9px 14px;border-radius:var(--radius-sm);
+  font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.12em;
+  cursor:pointer;white-space:nowrap;margin-left:12px;flex-shrink:0;
+  text-transform:uppercase;transition:all .2s;
+}
+.compat-btn:active{background:rgba(99,102,241,.3)}
+
+/* ── STICKY BOTTOM CTA ── */
+.sticky-cta{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:480px;z-index:400;
+  background:rgba(10,10,15,.97);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(16px);
+  padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));
+}
+.cta-preview-row{
+  display:flex;gap:5px;margin-bottom:9px;overflow-x:auto;
+  scrollbar-width:none;padding-bottom:1px;
+}
+.cta-preview-row::-webkit-scrollbar{display:none}
+.locked-chip{
+  display:flex;align-items:center;gap:4px;
+  background:var(--surface);border:1px solid var(--border);
+  padding:4px 10px;border-radius:100px;white-space:nowrap;flex-shrink:0;
+  font-size:.64rem;color:var(--muted);
+}
+.locked-chip .lk{opacity:.4;font-size:.6rem}
+.cta-row{display:flex;gap:8px;align-items:stretch}
+.cta-unlock-btn{
+  flex:1;background:var(--gold);color:#0a0a0f;border:none;
+  padding:14px;border-radius:var(--radius);
+  font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;
+  cursor:pointer;font-weight:700;
+  transition:opacity .2s,transform .1s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.cta-unlock-btn:active{opacity:.85;transform:scale(.98)}
+.cta-price{
+  background:var(--surface);border:1px solid var(--border);
+  padding:14px 16px;border-radius:var(--radius);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.cta-amount{font-size:1rem;font-weight:700;color:var(--gold);line-height:1}
+.cta-unit{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.12em;color:var(--muted);margin-top:2px}
+
+/* ── MODAL ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;
+  background:rgba(5,5,10,.9);backdrop-filter:blur(18px);
+  z-index:9000;align-items:flex-end;justify-content:center;
+}
+.modal-overlay.open{display:flex}
+.modal-sheet{
+  background:var(--surface);border:1px solid var(--border);border-bottom:none;
+  border-radius:20px 20px 0 0;
+  padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px));
+  width:100%;max-width:480px;
+  animation:slideUp .28s ease;
+}
+.modal-handle{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.13);margin:0 auto 20px}
+.modal-close{float:right;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;margin-top:-2px}
+
+/* PLAN CARDS */
+.plan-heading{font-size:1.05rem;font-weight:600;margin-bottom:4px}
+.plan-sub{font-size:.8rem;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.plan-cards{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.plan-card{
+  border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px;cursor:pointer;transition:all .2s;position:relative;
+}
+.plan-card.recommended{
+  border-color:rgba(200,169,106,.45);
+  background:rgba(200,169,106,.05);
+}
+.plan-card:active{transform:scale(.98)}
+.plan-rec-badge{
+  position:absolute;top:-1px;left:16px;
+  font-family:'DM Mono',monospace;font-size:.48rem;letter-spacing:.2em;
+  background:var(--gold);color:#0a0a0f;padding:3px 9px;text-transform:uppercase;font-weight:700;
+  border-radius:0 0 4px 4px;
+}
+.plan-row{display:flex;align-items:center;justify-content:space-between}
+.plan-name{font-size:.92rem;font-weight:600}
+.plan-price{font-size:1.05rem;font-weight:700;color:var(--gold)}
+.plan-orig{font-size:.75rem;color:var(--muted);text-decoration:line-through;margin-right:4px}
+.plan-desc{font-size:.75rem;color:var(--muted);margin-top:4px;line-height:1.55}
+.plan-includes{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.plan-tag{
+  font-size:.62rem;color:rgba(240,235,224,.5);
+  background:var(--surface2);border:1px solid var(--border);
+  padding:3px 8px;border-radius:4px;
+}
+.plan-tag.new{color:var(--gold);border-color:rgba(200,169,106,.25);background:rgba(200,169,106,.08)}
+
+.pay-btn{
+  width:100%;padding:15px;background:var(--gold);color:#0a0a0f;border:none;
+  border-radius:var(--radius);font-family:'DM Mono',monospace;
+  font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
+  cursor:pointer;font-weight:700;margin-top:4px;
+  transition:opacity .2s,transform .1s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.pay-btn:active{opacity:.85;transform:scale(.98)}
+.pay-note{text-align:center;font-size:.68rem;color:rgba(240,235,224,.25);margin-top:8px;font-style:italic}
+
+/* ICON COLORS */
+.ic-gold{background:rgba(200,169,106,.12)}
+.ic-red{background:rgba(192,57,43,.12)}
+.ic-blue{background:rgba(59,130,246,.1)}
+.ic-green{background:rgba(39,174,96,.1)}
+.ic-purple{background:rgba(139,92,246,.1)}
+.ic-orange{background:rgba(249,115,22,.1)}
+.ic-teal{background:rgba(20,184,166,.1)}
+
+/* FREE UNLOCK BAR */
+
+
+.free-unlock-label strong{color:var(--paper);font-weight:500}
+
+
+
+/* Bottom groq note */
+.groq-note{
+  text-align:center;padding:14px 16px 8px;
+  font-family:'DM Mono',monospace;font-size:.5rem;
+  letter-spacing:.18em;color:rgba(240,235,224,.18);text-transform:uppercase;
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">사<span>주</span> SAJU</div>
+  <button class="topbar-back" onclick="window.location.href='index.html'">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    New Reading
+  </button>
+</div>
+
+<!-- PERSON HEADER -->
+<div class="person-header">
+  <div class="person-row">
+    <div class="person-avatar">E</div>
+    <div>
+      <div class="person-name">Emma Clarke's Reading</div>
+      <div class="person-meta">Jun 14, 1991 · 07:22 · London, UK</div>
+    </div>
+  </div>
+  <span class="reading-type-chip">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    Full Destiny Reading
+  </span>
+</div>
+
+<!-- FOUR PILLARS -->
+<div class="pillars-section">
+  <div class="section-eyebrow">Four Pillars · 사주팔자</div>
+  <div class="pillars-grid">
+    <div class="p-card">
+      <span class="p-pos">Year</span>
+      <span class="p-stem">辛</span>
+      <span class="p-stem-el">Metal−</span>
+      <span class="p-branch">未</span>
+      <span class="p-animal">Goat</span>
+    </div>
+    <div class="p-card">
+      <span class="p-pos">Month</span>
+      <span class="p-stem">壬</span>
+      <span class="p-stem-el">Water+</span>
+      <span class="p-branch">午</span>
+      <span class="p-animal">Horse</span>
+    </div>
+    <div class="p-card day-master">
+      <span class="p-pos">Day ★</span>
+      <span class="p-stem">甲</span>
+      <span class="p-stem-el">Wood+</span>
+      <span class="p-branch">子</span>
+      <span class="p-animal">Rat</span>
+    </div>
+    <div class="p-card">
+      <span class="p-pos">Hour</span>
+      <span class="p-stem">壬</span>
+      <span class="p-stem-el">Water+</span>
+      <span class="p-branch">辰</span>
+      <span class="p-animal">Dragon</span>
+    </div>
+  </div>
+</div>
+
+<!-- ELEMENT BAR -->
+<div class="el-bar-section">
+  <div class="el-track">
+    <div class="el-seg" style="width:25%;background:#4ade80;opacity:.75"></div>
+    <div class="el-seg" style="width:12%;background:#f87171;opacity:.75"></div>
+    <div class="el-seg" style="width:20%;background:#fb923c;opacity:.75"></div>
+    <div class="el-seg" style="width:18%;background:#c8a96a;opacity:.75"></div>
+    <div class="el-seg" style="width:25%;background:#60a5fa;opacity:.75"></div>
+  </div>
+  <div class="el-legend">
+    <span class="el-item"><span class="el-dot" style="background:#4ade80"></span>Wood 2</span>
+    <span class="el-item"><span class="el-dot" style="background:#f87171"></span>Fire 1</span>
+    <span class="el-item"><span class="el-dot" style="background:#fb923c"></span>Earth 2</span>
+    <span class="el-item"><span class="el-dot" style="background:#c8a96a"></span>Metal 1</span>
+    <span class="el-item"><span class="el-dot" style="background:#60a5fa"></span>Water 2</span>
+  </div>
+</div>
+
+<div class="sep"><div class="sep-line"></div><span class="sep-sym">☯</span><div class="sep-line"></div></div>
+
+<!-- ════════════════════════════
+  SECTION 1 — WHO YOU ARE (free, expandable)
+════════════════════════════ -->
+<div class="r-section">
+  <div class="r-card" style="animation-delay:.08s">
+    <div class="r-card-head">
+      <div class="r-icon ic-gold">☀</div>
+      <div>
+        <span class="r-tag" style="color:var(--gold)">Who You Are</span>
+        <div class="r-title">The Persistent Visionary</div>
+      </div>
+    </div>
+
+    <div class="r-body expand-preview">
+      <p class="r-para">You're driven by a quiet but deeply felt need to build something that lasts. Wood Day Master with strong Water support means you have the ideas <em>and</em> the stamina to execute — but you're probably harder on yourself than anyone around you realizes.</p>
+      <p class="r-para">At work, you're the person who's already three steps ahead of the meeting agenda. You've learned to slow down how fast you speak so others can catch up — though it still frustrates you when they don't.</p>
+      <div class="r-callout"><p>"You're not the most vocal person in a group, but when you do speak, people stop and listen. That's a power you probably underestimate."</p></div>
+    </div>
+
+    <div class="expand-content" id="expand-core">
+      <div class="insight-list">
+        <div class="insight-item">
+          <span class="insight-icon">🧠</span>
+          <span class="insight-text"><strong>How you process information:</strong> You absorb a lot before you respond. This looks like calm confidence to others — internally, it's rapid-fire analysis you've learned to hide.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">⚡</span>
+          <span class="insight-text"><strong>Under pressure:</strong> You become hyper-focused and slightly withdrawn. You don't spiral — you go internal. People sometimes mistake this for coldness.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">🎯</span>
+          <span class="insight-text"><strong>What people rely on you for:</strong> Honesty that doesn't feel like a punch. You have a rare ability to deliver hard truths in a way that lands as care.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">🔋</span>
+          <span class="insight-text"><strong>Energy pattern:</strong> You burn intensely for stretches, then need real downtime — not Netflix, but genuine solitude. If you don't protect that, you get irritable in ways that surprise people who think you're always steady.</span>
+        </div>
+      </div>
+      <div class="score-grid" style="margin-top:14px">
+        <div class="score-row">
+          <span class="score-label">Ambition</span>
+          <div class="score-bar-wrap"><div class="score-bar-fill" style="width:88%;background:linear-gradient(to right,#c8a96a,#f0c080)"></div></div>
+          <span class="score-val">88</span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">Intuition</span>
+          <div class="score-bar-wrap"><div class="score-bar-fill" style="width:75%;background:linear-gradient(to right,#60a5fa,#93c5fd)"></div></div>
+          <span class="score-val">75</span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">Resilience</span>
+          <div class="score-bar-wrap"><div class="score-bar-fill" style="width:82%;background:linear-gradient(to right,#4ade80,#86efac)"></div></div>
+          <span class="score-val">82</span>
+        </div>
+        <div class="score-row">
+          <span class="score-label">Adaptability</span>
+          <div class="score-bar-wrap"><div class="score-bar-fill" style="width:62%;background:linear-gradient(to right,#fb923c,#fdba74)"></div></div>
+          <span class="score-val">62</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="more-btn" id="btn-core" onclick="toggleExpand('core')">
+      <span>Full personality analysis</span>
+      <span class="arr">▾</span>
+    </button>
+  </div>
+</div>
+
+<div class="sep"><div class="sep-line"></div><span class="sep-sym">☯</span><div class="sep-line"></div></div>
+
+<!-- ════════════════════════════
+  SECTION 2 — HOW YOU'RE WIRED (free, expandable)
+════════════════════════════ -->
+<div class="r-section">
+  <div class="r-card" style="animation-delay:.14s">
+    <div class="r-card-head">
+      <div class="r-icon ic-teal">⬟</div>
+      <div>
+        <span class="r-tag" style="color:#2dd4bf">Your Energy Profile</span>
+        <div class="r-title">How You're Wired</div>
+      </div>
+    </div>
+    <div class="r-body">
+      <p class="r-para">Strong Wood and Water means you're a natural starter and a deep thinker — two things that are great individually but sometimes conflict. You have more ideas than time, and the gap between them is where most of your stress lives.</p>
+      <p class="r-para">Your Fire is the weakest element. In practice this means you can run low on enthusiasm mid-project, especially if the initial excitement has worn off and the work becomes routine.</p>
+      <div class="insight-list">
+        <div class="insight-item">
+          <span class="insight-icon">💡</span>
+          <span class="insight-text"><strong>Balance tip this week:</strong> Do one thing for pure fun — no outcome, no optimization. Your chart needs Fire to stay motivated, and play is the fastest way to generate it.</span>
+        </div>
+      </div>
+    </div>
+    <div class="expand-content" id="expand-elements">
+      <div class="insight-list">
+        <div class="insight-item">
+          <span class="insight-icon">🌊</span>
+          <span class="insight-text"><strong>Water dominance:</strong> You feel things deeply before you name them. Your gut is usually right — the problem is you second-guess it with logic until the moment has passed.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">🌱</span>
+          <span class="insight-text"><strong>Wood core:</strong> You're built for growth, not maintenance. Roles or relationships that feel static drain you faster than difficult ones do.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">⚠️</span>
+          <span class="insight-text"><strong>Metal imbalance:</strong> You can struggle with follow-through on details. You see the forest, not the trees — which means you sometimes need a detail-oriented person in your corner.</span>
+        </div>
+      </div>
+    </div>
+    <button class="more-btn" id="btn-elements" onclick="toggleExpand('elements')">
+      <span>Full elemental analysis</span>
+      <span class="arr">▾</span>
+    </button>
+  </div>
+</div>
+
+<div class="sep"><div class="sep-line"></div><span class="sep-sym">☯</span><div class="sep-line"></div></div>
+
+<!-- ════════════════════════════
+  SECTION 3 — LOVE (free preview → premium gate)
+════════════════════════════ -->
+<div class="r-section">
+  <div class="r-card" style="animation-delay:.2s">
+    <div class="r-card-head">
+      <div class="r-icon ic-red">♡</div>
+      <div>
+        <span class="r-tag" style="color:#f87171">Love &amp; Relationships</span>
+        <div class="r-title">How You Love</div>
+      </div>
+    </div>
+    <div style="position:relative">
+      <div class="r-body premium-blur">
+        <p class="r-para">You don't fall quickly, but when you do, you're completely in. Early dating tends to involve a lot of observation — you're watching how someone handles small moments before you let yourself get attached.</p>
+        <p class="r-para">In a long-term relationship, you show love through acts of presence — being there consistently, remembering the small things, staying calm when your partner isn't. You need the same back. What exhausts you most isn't conflict — it's inconsistency.</p>
+        <p class="r-para">Your biggest recurring pattern: you attract people who mistake your patience for inexhaustibility. You give and give until one day you're just... done. People close to you have probably noticed this cycle.</p>
+        <div class="r-callout"><p>"The love you're capable of is profound — but you need someone who shows up, not just someone who shows."</p></div>
+      </div>
+      <div class="premium-gate">
+        <div class="gate-icon">♡</div>
+        <div class="gate-title">Your Love Reading</div>
+        <div class="gate-sub">Includes ideal partner profile, relationship patterns, and your most likely path to lasting love.</div>
+        <button class="gate-btn" onclick="openPaywall()">
+          Unlock Full Reading
+        </button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"><div class="sep-line"></div><span class="sep-sym">☯</span><div class="sep-line"></div></div>
+
+<!-- ════════════════════════════
+  SECTION 4 — CAREER (premium gate)
+════════════════════════════ -->
+<div class="r-section">
+  <div class="r-card" style="animation-delay:.26s">
+    <div class="r-card-head">
+      <div class="r-icon ic-orange">◈</div>
+      <div>
+        <span class="r-tag" style="color:#fb923c">Career &amp; Wealth</span>
+        <div class="r-title">Work, Money &amp; Ambition</div>
+      </div>
+    </div>
+    <div style="position:relative">
+      <div class="r-body premium-blur">
+        <p class="r-para">You thrive in environments where there's genuine complexity to navigate. Pure execution roles — the ones where everything is defined and repeatable — quietly hollow you out, even if the pay is good.</p>
+        <p class="r-para">With Metal weak in your chart, your relationship with money tends to be cyclical: periods of accumulation followed by periods of bold spending on ideas or experiences. You're not reckless — you just value optionality over security.</p>
+        <div class="insight-list">
+          <div class="insight-item"><span class="insight-icon">💼</span><span class="insight-text"><strong>Best fit:</strong> Strategy, consulting, entrepreneurship, research, creative direction. Roles that reward original thinking and punish rigidity.</span></div>
+        </div>
+      </div>
+      <div class="premium-gate">
+        <div class="gate-icon">◈</div>
+        <div class="gate-title">Career &amp; Wealth Reading</div>
+        <div class="gate-sub">Your ideal work environment, wealth patterns, and best-fit industries — in detail.</div>
+        <button class="gate-btn" onclick="openPaywall()">Unlock Full Reading</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"><div class="sep-line"></div><span class="sep-sym">☯</span><div class="sep-line"></div></div>
+
+<!-- ════════════════════════════
+  SECTION 5 — HEALTH (premium)
+════════════════════════════ -->
+<div class="r-section">
+  <div class="r-card" style="animation-delay:.3s">
+    <div class="r-card-head">
+      <div class="r-icon ic-green">⬡</div>
+      <div>
+        <span class="r-tag" style="color:#4ade80">Health &amp; Vitality</span>
+        <div class="r-title">Your Body &amp; Energy</div>
+      </div>
+    </div>
+    <div style="position:relative">
+      <div class="r-body premium-blur">
+        <p class="r-para">Stress tends to land in your digestive system and lower back — the classic Wood-Water combination under pressure. When you're overwhelmed, your body tells you before your mind admits it.</p>
+        <p class="r-para">You push until you drop, rest briefly, then push again. This works for a while — your chart actually supports high output — but the recovery window shortens as you get older.</p>
+      </div>
+      <div class="premium-gate">
+        <div class="gate-icon">⬡</div>
+        <div class="gate-title">Health &amp; Vitality Reading</div>
+        <div class="gate-sub">Physical stress patterns, energy rhythms, and practical wellness habits for your chart.</div>
+        <button class="gate-btn" onclick="openPaywall()">Unlock Full Reading</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"><div class="sep-line"></div><span class="sep-sym">☯</span><div class="sep-line"></div></div>
+
+<!-- ════════════════════════════
+  SECTION 6 — LUCK CYCLES (premium, shows timeline preview)
+════════════════════════════ -->
+<div class="r-section">
+  <div class="r-card" style="animation-delay:.34s">
+    <div class="r-card-head">
+      <div class="r-icon ic-blue">⟳</div>
+      <div>
+        <span class="r-tag" style="color:#60a5fa">Big Picture Timing</span>
+        <div class="r-title">The Decades Ahead</div>
+      </div>
+    </div>
+    <div class="r-body">
+      <p class="r-para">Your luck cycles begin at age 7 and shift every 10 years. You're currently in the <strong>壬子 cycle (age 33–42)</strong> — a Water-heavy phase that rewards deep work, inner clarity, and decisions made from genuine conviction rather than external pressure.</p>
+    </div>
+
+    <!-- Visible timeline preview -->
+    <div style="padding:0 16px 14px">
+      <div class="dw-timeline">
+        <div class="dw-item">
+          <div class="dw-spine"><div class="dw-dot"></div><div class="dw-line"></div></div>
+          <div class="dw-content">
+            <div class="dw-header"><span class="dw-pillar">癸丑</span><span class="dw-years">Age 23–32 · 2014–2023</span></div>
+            <div class="dw-desc">Foundation-building phase — career roots laid, identity clarified.</div>
+          </div>
+        </div>
+        <div class="dw-item">
+          <div class="dw-spine"><div class="dw-dot now"></div><div class="dw-line"></div></div>
+          <div class="dw-content">
+            <div class="dw-header">
+              <span class="dw-pillar">壬子</span>
+              <span class="dw-years">Age 33–42 · 2024–2033</span>
+              <span class="dw-now-chip">▶ Now</span>
+            </div>
+            <div class="dw-theme">Deepening</div>
+            <div class="dw-desc">The decade where surface ambition gives way to something more specific. What you build now, you build to keep.</div>
+          </div>
+        </div>
+        <!-- Locked cycles below -->
+        <div style="position:relative">
+          <div class="dw-item" style="filter:blur(4px);opacity:.4;pointer-events:none">
+            <div class="dw-spine"><div class="dw-dot"></div><div class="dw-line"></div></div>
+            <div class="dw-content">
+              <div class="dw-header"><span class="dw-pillar">辛亥</span><span class="dw-years">Age 43–52 · 2034–2043</span></div>
+              <div class="dw-desc">Major pivot incoming — career and personal life may diverge before reconverging.</div>
+            </div>
+          </div>
+          <div class="dw-item" style="filter:blur(4px);opacity:.3;pointer-events:none">
+            <div class="dw-spine"><div class="dw-dot"></div></div>
+            <div class="dw-content">
+              <div class="dw-header"><span class="dw-pillar">庚戌</span><span class="dw-years">Age 53–62 · 2044–2053</span></div>
+              <div class="dw-desc">Harvest phase — reaping what was planted in the 40s.</div>
+            </div>
+          </div>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(to bottom,rgba(10,10,15,.2),rgba(10,10,15,.92))">
+            <button class="gate-btn" onclick="openPaywall()" style="font-size:.6rem;padding:10px 20px">See All 8 Cycles →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"><div class="sep-line"></div><span class="sep-sym">☯</span><div class="sep-line"></div></div>
+
+<!-- ════════════════════════════
+  SECTION 7 — THIS YEAR (premium, shows month grid preview)
+════════════════════════════ -->
+<div class="r-section">
+  <div class="r-card" style="animation-delay:.38s">
+    <div class="r-card-head">
+      <div class="r-icon ic-gold">★</div>
+      <div>
+        <span class="r-tag" style="color:var(--gold)">Right Now</span>
+        <div class="r-title">What 2025 Is About</div>
+      </div>
+    </div>
+    <div class="r-body">
+      <p class="r-para">2025 (乙巳 year) activates your Wood energy directly — this is a year that rewards initiative but punishes scattered effort. The people who get the most from this year are the ones who decide what <em>not</em> to pursue.</p>
+    </div>
+
+    <!-- Month grid preview — some locked -->
+    <div style="padding:0 16px 4px">
+      <div style="font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:8px">Monthly energy map</div>
+      <div class="forecast-months">
+        <div class="fmonth"><span class="fmonth-name">Jan</span><div class="fmonth-dot"></div><span class="fmonth-label">Steady</span></div>
+        <div class="fmonth caution"><span class="fmonth-name">Feb</span><div class="fmonth-dot"></div><span class="fmonth-label">Caution</span></div>
+        <div class="fmonth highlight"><span class="fmonth-name">Mar</span><div class="fmonth-dot"></div><span class="fmonth-label">Strong ↑</span></div>
+        <div class="fmonth highlight"><span class="fmonth-name">Apr</span><div class="fmonth-dot"></div><span class="fmonth-label">Excellent</span></div>
+        <!-- Locked months -->
+        <div class="fmonth" style="filter:blur(3px);opacity:.35"><span class="fmonth-name">May</span><div class="fmonth-dot"></div><span class="fmonth-label">—</span></div>
+        <div class="fmonth" style="filter:blur(3px);opacity:.35"><span class="fmonth-name">Jun</span><div class="fmonth-dot"></div><span class="fmonth-label">—</span></div>
+        <div class="fmonth" style="filter:blur(3px);opacity:.35"><span class="fmonth-name">Jul</span><div class="fmonth-dot"></div><span class="fmonth-label">—</span></div>
+        <div class="fmonth" style="filter:blur(3px);opacity:.35"><span class="fmonth-name">Aug</span><div class="fmonth-dot"></div><span class="fmonth-label">—</span></div>
+      </div>
+    </div>
+
+    <div style="position:relative;margin-top:6px">
+      <div class="r-body premium-blur" style="padding-top:8px">
+        <div class="r-callout"><p>"March through May is your window — don't be cautious when the energy is genuinely with you."</p></div>
+      </div>
+      <div class="premium-gate" style="background:linear-gradient(to bottom,rgba(10,10,15,.5),rgba(10,10,15,.97))">
+        <div class="gate-icon">★</div>
+        <div class="gate-title">Full Year Forecast</div>
+        <div class="gate-sub">All 12 months, best windows for career moves, relationships, and when to hold back.</div>
+        <button class="gate-btn" onclick="openPaywall()">Unlock Full Reading</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"><div class="sep-line"></div><span class="sep-sym">☯</span><div class="sep-line"></div></div>
+
+<!-- ════════════════════════════
+  COMPATIBILITY TEASER
+════════════════════════════ -->
+<div class="compat-teaser">
+  <div class="compat-row">
+    <div class="compat-text">
+      <span class="compat-tag">New · Compatibility</span>
+      <div class="compat-title">Check a Relationship</div>
+      <div class="compat-sub">Add another person's chart to see how your pillars interact — in love, friendship, or work.</div>
+    </div>
+    <button class="compat-btn" onclick="openPaywall()">Try it →</button>
+  </div>
+</div>
+
+<div class="groq-note">⚡ Powered by Groq · Llama 3.3 70B · All calculations browser-side</div>
+
+<!-- ════════════════════════════
+  STICKY BOTTOM CTA
+════════════════════════════ -->
+<div class="sticky-cta" id="stickyCta">
+  <div class="cta-preview-row">
+    <span class="locked-chip"><span class="lk">🔒</span> Full Love Reading</span>
+    <span class="locked-chip"><span class="lk">🔒</span> Career Deep Dive</span>
+    <span class="locked-chip"><span class="lk">🔒</span> 8 Luck Cycles</span>
+    <span class="locked-chip"><span class="lk">🔒</span> 12-Month Map</span>
+    <span class="locked-chip"><span class="lk">🔒</span> Compatibility</span>
+  </div>
+  <div class="cta-row">
+    <button class="cta-unlock-btn" onclick="openPaywall()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Unlock Full Reading
+    </button>
+    <div class="cta-price">
+      <span class="cta-amount">$4.99</span>
+      <span class="cta-unit">one-time</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════
+  PAYWALL MODAL
+════════════════════════════ -->
+<div class="modal-overlay" id="paywallModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closePaywall()">×</button>
+    <div class="plan-heading">Unlock Emma's full reading</div>
+    <div class="plan-sub">Complete access to all sections — love, career, health, all 8 luck cycles, 12-month forecast, and compatibility.</div>
+
+    <div class="plan-cards">
+
+      <div class="plan-card recommended">
+        <div class="plan-rec-badge">Best value</div>
+        <div class="plan-row">
+          <span class="plan-name">Complete Reading</span>
+          <span class="plan-price"><span class="plan-orig">$9.99</span>$4.99</span>
+        </div>
+        <div class="plan-desc">Everything in this reading, unlocked permanently. Share with friends, revisit anytime.</div>
+        <div class="plan-includes">
+          <span class="plan-tag">Love &amp; dating</span>
+          <span class="plan-tag">Career + wealth</span>
+          <span class="plan-tag">Health patterns</span>
+          <span class="plan-tag">8 luck cycles</span>
+          <span class="plan-tag">12-month map</span>
+          <span class="plan-tag new">✦ Compatibility</span>
+        </div>
+      </div>
+
+      <div class="plan-card">
+        <div class="plan-row">
+          <span class="plan-name">One Section</span>
+          <span class="plan-price">$1.99</span>
+        </div>
+        <div class="plan-desc">Pick any locked section to unlock individually. Good if you only want one answer.</div>
+        <div class="plan-includes">
+          <span class="plan-tag">Choose: Love</span>
+          <span class="plan-tag">or Career</span>
+          <span class="plan-tag">or Health</span>
+          <span class="plan-tag">or Luck Cycles</span>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="pay-btn" onclick="simulatePurchase()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Continue to Payment — $4.99
+    </button>
+    <div class="pay-note">Secure payment · One-time charge · No subscription</div>
+
+    <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
+      
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <button onclick="shareAndUnlock('Instagram')" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .18s;text-align:left">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="url(#ig2)"><defs><linearGradient id="ig2" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#f09433"/><stop offset="50%" style="stop-color:#dc2743"/><stop offset="100%" style="stop-color:#bc1888"/></linearGradient></defs><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          <div style="flex:1"><div style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--paper)">Share to Instagram Story</div><div style="font-size:.7rem;color:var(--muted);font-style:italic">Post &amp; tap Done to unlock</div></div>
+          <span style="color:rgba(200,169,106,.35)">›</span>
+        </button>
+        <button onclick="shareAndUnlock('X')" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;text-align:left">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <div style="flex:1"><div style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--paper)">Post on X</div><div style="font-size:.7rem;color:var(--muted);font-style:italic">Share the link, then tap Done</div></div>
+          <span style="color:rgba(200,169,106,.35)">›</span>
+        </button>
+        <button onclick="shareAndUnlock('Threads')" style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;text-align:left">
+          <svg width="18" height="18" viewBox="0 0 192 192" fill="currentColor"><path d="M141.537 88.988a66.667 66.667 0 0 0-2.518-1.143c-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.396-35.12 18.036l13.779 9.452c5.73-8.695 14.724-10.548 21.348-10.548h.229c8.249.053 14.474 2.452 18.503 7.129 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.68-1.14-23.82 1.371-39.134 15.264-38.105 34.568.522 9.792 5.4 18.216 13.735 23.719 7.047 4.652 16.124 6.927 25.557 6.412 12.458-.683 22.231-5.436 29.049-14.127 5.178-6.6 8.453-15.153 9.899-25.93 5.937 3.583 10.337 8.298 12.767 13.966 4.132 9.635 4.373 25.468-8.546 38.376-11.319 11.308-24.925 16.2-45.488 16.351-22.809-.169-40.06-7.484-51.275-21.742C35.236 139.966 29.808 120.682 29.605 96c.203-24.682 5.63-43.966 16.133-57.317C56.954 24.425 74.206 17.11 97.015 16.94c22.975.17 40.526 7.52 52.171 21.847 5.71 7.026 10.015 15.86 12.853 26.162l16.147-4.308c-3.44-12.68-8.853-23.606-16.219-32.668C147.036 9.607 125.202.195 97.144 0h-.29C68.988.195 47.396 9.642 32.777 28.08 19.873 44.485 13.224 67.315 13.001 96c.223 28.685 6.872 51.515 19.776 67.92 14.619 18.438 36.211 27.885 64.267 28.08h.29c24.971-.174 42.8-6.713 57.389-21.286 19.083-19.063 18.456-42.977 12.187-57.637-4.461-10.39-13.033-18.755-25.373-24.089Zm-44.206 41.59c-10.437.572-21.286-4.1-21.82-14.139-.397-7.442 5.296-15.746 22.461-16.735 1.966-.113 3.895-.169 5.79-.169 6.235 0 12.068.606 17.371 1.765-1.978 24.702-13.58 28.713-23.802 29.278Z"/></svg>
+          <div style="flex:1"><div style="font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--paper)">Share on Threads</div><div style="font-size:.7rem;color:var(--muted);font-style:italic">Share the link, then tap Done</div></div>
+          <span style="color:rgba(200,169,106,.35)">›</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </button>
+      <button onclick="shareAndUnlock('X')" style="display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;width:100%;text-align:left">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        <div style="flex:1"><div style="font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;color:var(--paper)">Post on X</div><div style="font-size:.72rem;color:var(--muted);font-style:italic">Share the reading link on X</div></div>
+      </button>
+      <button onclick="shareAndUnlock('Threads')" style="display:flex;align-items:center;gap:12px;padding:13px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;width:100%;text-align:left">
+        <svg width="20" height="20" viewBox="0 0 192 192" fill="currentColor"><path d="M141.537 88.988a66.667 66.667 0 0 0-2.518-1.143c-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.396-35.12 18.036l13.779 9.452c5.73-8.695 14.724-10.548 21.348-10.548h.229c8.249.053 14.474 2.452 18.503 7.129 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.68-1.14-23.82 1.371-39.134 15.264-38.105 34.568.522 9.792 5.4 18.216 13.735 23.719 7.047 4.652 16.124 6.927 25.557 6.412 12.458-.683 22.231-5.436 29.049-14.127 5.178-6.6 8.453-15.153 9.899-25.93 5.937 3.583 10.337 8.298 12.767 13.966 4.132 9.635 4.373 25.468-8.546 38.376-11.319 11.308-24.925 16.2-45.488 16.351-22.809-.169-40.06-7.484-51.275-21.742C35.236 139.966 29.808 120.682 29.605 96c.203-24.682 5.63-43.966 16.133-57.317C56.954 24.425 74.206 17.11 97.015 16.94c22.975.17 40.526 7.52 52.171 21.847 5.71 7.026 10.015 15.86 12.853 26.162l16.147-4.308c-3.44-12.68-8.853-23.606-16.219-32.668C147.036 9.607 125.202.195 97.144 0h-.29C68.988.195 47.396 9.642 32.777 28.08 19.873 44.485 13.224 67.315 13.001 96c.223 28.685 6.872 51.515 19.776 67.92 14.619 18.438 36.211 27.885 64.267 28.08h.29c24.971-.174 42.8-6.713 57.389-21.286 19.083-19.063 18.456-42.977 12.187-57.637-4.461-10.39-13.033-18.755-25.373-24.089Zm-44.206 41.59c-10.437.572-21.286-4.1-21.82-14.139-.397-7.442 5.296-15.746 22.461-16.735 1.966-.113 3.895-.169 5.79-.169 6.235 0 12.068.606 17.371 1.765-1.978 24.702-13.58 28.713-23.802 29.278Z"/></svg>
+        <div style="flex:1"><div style="font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.1em;color:var(--paper)">Threads</div><div style="font-size:.72rem;color:var(--muted);font-style:italic">Post on Threads to unlock</div></div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleExpand(id){
+  const content=document.getElementById('expand-'+id);
+  const btn=document.getElementById('btn-'+id);
+  const isOpen=content.classList.contains('open');
+  content.classList.toggle('open',!isOpen);
+  btn.classList.toggle('open',!isOpen);
+  btn.querySelector('span:first-child').textContent=
+    isOpen?'Full personality analysis':'Hide full analysis';
+  if(!isOpen) setTimeout(()=>content.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+
+function openPaywall(){
+  document.getElementById('paywallModal').classList.add('open');
+}
+function closePaywall(){
+  document.getElementById('paywallModal').classList.remove('open');
+}
+// Close modals on overlay click
+['paywallModal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',function(e){
+    if(e.target===this)this.classList.remove('open');
+  });
+});
+
+function simulatePurchase(){
+  closePaywall();
+  // In production: trigger payment processor
+  // For demo: just show a toast
+  const toast=document.createElement('div');
+  toast.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#27ae60;color:white;padding:11px 20px;border-radius:8px;font-family:DM Mono,monospace;font-size:.62rem;letter-spacing:.15em;z-index:9999;animation:fadeIn .3s ease;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.3)';
+  toast.textContent='✓ Payment successful — reading unlocked';
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),3200);
+}
+
+function shareAndUnlock(platform){
+  const text=encodeURIComponent("Just got my Korean Saju reading — 'The Persistent Visionary' ✨ Try yours free:");
+  const url=encodeURIComponent(window.location.href);
+  if(platform==='Instagram'){
+    navigator.clipboard?.writeText(decodeURIComponent(text)+'\n'+window.location.href).catch(()=>{});
+    window.open('https://www.instagram.com/','_blank');
+  } else if(platform==='X'){
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`,'_blank');
+  } else if(platform==='Threads'){
+    window.open(`https://www.threads.net/intent/post?text=${text}%20${url}`,'_blank');
+  }
+  ['paywallModal'].forEach(id=>document.getElementById(id).classList.remove('open'));
+  // Show confirm toast
+  const toast=document.createElement('div');
+  toast.style.cssText='position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1c1b26;border:1px solid rgba(200,169,106,.3);color:var(--gold);padding:13px 18px;border-radius:10px;font-family:DM Mono,monospace;font-size:.62rem;letter-spacing:.12em;z-index:9999;animation:fadeIn .3s ease;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4);display:flex;align-items:center;gap:10px';
+  toast.innerHTML=`<span>Posted it?</span><button onclick="doUnlock()" style="background:var(--gold);color:#0a0a0f;border:none;padding:6px 14px;border-radius:6px;font-family:DM Mono,monospace;font-size:.58rem;letter-spacing:.12em;cursor:pointer;font-weight:700">Yes — Unlock ✓</button>`;
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),8000);
+}
+
+function doUnlock(){
+  document.querySelectorAll('.premium-gate').forEach(g=>g.style.display='none');
+  document.querySelectorAll('.premium-blur').forEach(b=>b.classList.remove('premium-blur'));
+  document.querySelectorAll('[style*="filter:blur"]').forEach(el=>el.style.filter='none');
+  document.querySelectorAll('[style*="blur"]').forEach(el=>{if(el.style.filter.includes('blur'))el.style.filter='';if(el.style.opacity==='0.35'||el.style.opacity==='0.3'||el.style.opacity==='0.4')el.style.opacity='';});
+  document.getElementById('stickyCta').style.display='none';
+  // Show success bar
+  const bar=document.createElement('div');
+  bar.style.cssText='position:sticky;bottom:0;left:0;right:0;background:rgba(39,174,96,.12);border-top:1px solid rgba(39,174,96,.25);padding:12px 16px;display:flex;align-items:center;gap:8px;font-family:DM Mono,monospace;font-size:.6rem;letter-spacing:.15em;color:#27ae60;text-transform:uppercase;z-index:400;';
+  bar.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Full reading unlocked';
+  document.body.appendChild(bar);
+}
+
+// Animate score bars on scroll
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.querySelectorAll('.score-bar-fill').forEach(b=>{b.style.width=b.style.width;});}});
+},{threshold:.3});
+document.querySelectorAll('.score-grid').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>

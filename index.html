@@ -2481,10 +2481,11 @@ Return ONLY: {${schema}}`;
 // ═══════════════════════════════
 // BOOT
 // ═══════════════════════════════
-initDropdowns();
-// dismiss modal on overlay click
-document.getElementById('loginModal').addEventListener('click',function(e){
-  if(e.target===this)this.classList.remove('open');
+document.addEventListener('DOMContentLoaded',function(){
+  initDropdowns();
+  if(typeof isShareUsed==='function'&&isShareUsed()) showShareUsedNotice();
+  var m=document.getElementById('loginModal');
+  if(m) m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 });
 
 // ═══════════════════════════════════════
@@ -2608,9 +2609,7 @@ function showShareUsedNotice(){
 function disableShareMethod(){showShareUsedNotice();}
 
 // 페이지 로드 시 이미 사용했으면 바로 notice 표시
-if(typeof isShareUsed==='function'&&isShareUsed()){
-  document.addEventListener('DOMContentLoaded',function(){showShareUsedNotice();});
-}
+
 
 // ═══════════════════════════════════════════
 // READING CACHE — 동일 입력 = 동일 결과 보장

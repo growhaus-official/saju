@@ -3164,6 +3164,50 @@ function doUnlock(via){
   startPaidReading();
 }
 
+// ── PAYMENT RETURN HANDLER ──
+// Lemon Squeezy 결제 완료 후 ?token=xxx&type=full 로 리다이렉트됨
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var token  = params.get('token');
+  var type   = params.get('type'); // 'full' or 'section'
+  var section= params.get('section'); // section key if type=section
+
+  if(token){
+    // 토큰 localStorage에 저장 (재방문 시에도 언락 유지)
+    try{
+      var purchases = JSON.parse(localStorage.getItem('saju_purchases')||'[]');
+      if(!purchases.includes(token)){
+        purchases.push(token);
+        localStorage.setItem('saju_purchases', JSON.stringify(purchases));
+        localStorage.setItem('saju_unlock_type', type||'full');
+        if(section) localStorage.setItem('saju_unlock_section', section);
+      }
+    }catch(e){}
+
+    // URL 파라미터 제거 (깔끔하게)
+    var cleanUrl = window.location.pathname;
+    window.history.replaceState({}, '', cleanUrl);
+
+    // 결제 완료 토스트
+    document.addEventListener('DOMContentLoaded', function(){
+      var toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#27ae60;color:white;padding:12px 20px;border-radius:8px;font-family:DM Mono,monospace;font-size:.62rem;letter-spacing:.15em;z-index:9999;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4)';
+      toast.textContent = type==='section' ? '✓ Section unlocked' : '✓ Full reading unlocked';
+      document.body.appendChild(toast);
+      setTimeout(function(){toast.remove();}, 3500);
+    });
+  }
+})();
+
+// 저장된 언락 상태 확인 함수
+function getStoredUnlock(){
+  try{
+    var type = localStorage.getItem('saju_unlock_type');
+    var section = localStorage.getItem('saju_unlock_section');
+    return type ? {type:type, section:section} : null;
+  }catch(e){ return null; }
+}
+
 </script>
 </body>
 </html>
